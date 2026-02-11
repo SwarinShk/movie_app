@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:movie_app/core/constants/app_color.dart';
 import 'package:movie_app/shared/button/custom_button.dart';
-import 'package:movie_app/shared/button/custom_icon_button.dart';
+import 'package:movie_app/shared/button/socials_button.dart';
 import 'package:movie_app/shared/indicator/line_divider.dart';
 
 class SignupScreen extends StatefulWidget {
@@ -104,17 +104,17 @@ class _SignupScreenState extends State<SignupScreen> {
                       spacing: 30,
                       mainAxisAlignment: .center,
                       children: [
-                        CustomIconButton(
+                        SocialsButton(
                           icon: 'assets/icons/google_icon.png',
                           backgroundColor: AppColor.google,
                           onPressed: () {},
                         ),
-                        CustomIconButton(
+                        SocialsButton(
                           icon: 'assets/icons/apple_icon.png',
                           backgroundColor: AppColor.apple,
                           onPressed: () {},
                         ),
-                        CustomIconButton(
+                        SocialsButton(
                           icon: 'assets/icons/facebook_icon.png',
                           backgroundColor: AppColor.facebook,
                           onPressed: () {},

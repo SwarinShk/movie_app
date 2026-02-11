@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:movie_app/core/constants/app_color.dart';
+import 'package:movie_app/core/constants/storage_constants.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -11,10 +13,20 @@ class SplashScreen extends StatefulWidget {
 
 class _SplashScreenState extends State<SplashScreen> {
   void init() async {
+    final pref = await SharedPreferences.getInstance();
+    bool isFirstTime = pref.getBool(StorageConstants.firstTime) ?? true;
+
     await Future.delayed(Duration(seconds: 1));
 
     if (!mounted) return;
-    context.pushReplacementNamed('onboarding');
+
+    if (isFirstTime) {
+      context.pushReplacementNamed('onboarding');
+      return;
+    } else {
+      context.pushReplacementNamed('signup');
+      return;
+    }
   }
 
   @override

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:movie_app/core/constants/app_color.dart';
 import 'package:movie_app/router/router.dart';
 
@@ -19,7 +20,12 @@ class MainApp extends StatelessWidget {
         fontFamily: 'Montserrat',
         primaryColor: AppColor.dark,
         scaffoldBackgroundColor: AppColor.dark,
-        appBarTheme: AppBarTheme(backgroundColor: AppColor.dark),
+        appBarTheme: AppBarTheme(
+          backgroundColor: AppColor.dark,
+          systemOverlayStyle: SystemUiOverlayStyle(
+            statusBarColor: AppColor.black,
+          ),
+        ),
         bottomNavigationBarTheme: BottomNavigationBarThemeData(
           backgroundColor: AppColor.dark,
         ),

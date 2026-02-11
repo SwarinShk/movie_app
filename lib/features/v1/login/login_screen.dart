@@ -80,7 +80,12 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
               ),
               SizedBox(height: 40),
-              CustomButton(title: 'Log In', onPressed: () {}),
+              CustomButton(
+                title: 'Log In',
+                onPressed: () {
+                  context.go('/home');
+                },
+              ),
               SizedBox(height: 30),
             ],
           ),

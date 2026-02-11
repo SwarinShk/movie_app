@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:movie_app/core/constants/app_color.dart';
 
-class CustomIconButton extends StatelessWidget {
+class SocialsButton extends StatelessWidget {
   final double height;
   final double width;
   final String icon;
   final Color backgroundColor;
   final void Function() onPressed;
 
-  const CustomIconButton({
+  const SocialsButton({
     this.height = 65,
     this.width = 65,
     required this.icon,
