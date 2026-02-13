@@ -1,50 +1,26 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:movie_app/core/constants/app_color.dart';
+import 'package:movie_app/core/constants/app_textstyle.dart';
+import 'package:movie_app/providers/auth_provider.dart';
+import 'package:movie_app/shared/appbar/home_appbar.dart';
+import 'package:provider/provider.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final authProvider = context.read<AuthProvider>();
+
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: AppColor.dark,
-        elevation: 0,
-        leading: const Padding(
-          padding: EdgeInsets.only(left: 15),
-          child: CircleAvatar(radius: 20, child: Text('SS')),
-        ),
-        title: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: const [
-            Text(
-              'Hello, Smith',
-              style: TextStyle(color: AppColor.white, fontSize: 16),
-            ),
-            SizedBox(height: 4),
-            Text(
-              'Let\'s stream your favorite movie',
-              style: TextStyle(color: AppColor.whiteGrey, fontSize: 13),
-            ),
-          ],
-        ),
-        actions: [
-          Padding(
-            padding: const EdgeInsets.only(right: 15),
-            child: IconButton.filled(
-              onPressed: () {},
-              icon: const Icon(Icons.favorite),
-              style: IconButton.styleFrom(
-                backgroundColor: AppColor.soft,
-                foregroundColor: AppColor.redAccent,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-              ),
-            ),
-          ),
-        ],
+      appBar: HomeAppBar(
+        userName: authProvider.account!.username,
+        subtitle: 'Let\'s stream your favorite movie',
+        onFavoriteTap: () {
+          context.read<AuthProvider>().logout();
+          context.goNamed('signup');
+        },
       ),
 
       body: SafeArea(
@@ -52,15 +28,11 @@ class HomeScreen extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 15),
           child: Column(
             crossAxisAlignment: .start,
-            children: const [
+            children: [
               SizedBox(height: 20),
               Text(
                 "Trending Now",
-                style: TextStyle(
-                  color: AppColor.white,
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                ),
+                style: AppTextStyle.h4SemiBold.copyWith(color: AppColor.white),
               ),
               SizedBox(height: 15),
               SizedBox(
@@ -68,7 +40,9 @@ class HomeScreen extends StatelessWidget {
                 child: Center(
                   child: Text(
                     "Movie List Here",
-                    style: TextStyle(color: AppColor.white),
+                    style: AppTextStyle.h4SemiBold.copyWith(
+                      color: AppColor.white,
+                    ),
                   ),
                 ),
               ),

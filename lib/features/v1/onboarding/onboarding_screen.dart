@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:movie_app/core/constants/app_color.dart';
+import 'package:movie_app/core/constants/app_textstyle.dart';
 import 'package:movie_app/core/constants/storage_constants.dart';
 import 'package:movie_app/shared/indicator/dot_indicator.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -92,20 +93,16 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                             children: [
                               Text(
                                 _pages[index]['title']!,
-                                style: const TextStyle(
+                                style: AppTextStyle.h3SemiBold.copyWith(
                                   color: AppColor.white,
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.w600,
                                 ),
                                 textAlign: TextAlign.center,
                               ),
                               const SizedBox(height: 20),
                               Text(
                                 _pages[index]['subtitle']!,
-                                style: const TextStyle(
-                                  color: AppColor.grey,
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w500,
+                                style: AppTextStyle.h5Medium.copyWith(
+                                  color: AppColor.white,
                                 ),
                                 textAlign: TextAlign.center,
                               ),

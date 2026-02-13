@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:movie_app/core/constants/app_color.dart';
+import 'package:movie_app/core/constants/app_textstyle.dart';
 
 class LabeledField extends StatelessWidget {
   const LabeledField({super.key, required this.label, required this.child});
@@ -12,7 +13,10 @@ class LabeledField extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(label, style: TextStyle(fontSize: 14, color: AppColor.whiteGrey)),
+        Text(
+          label,
+          style: AppTextStyle.h5Regular.copyWith(color: AppColor.white),
+        ),
         const SizedBox(height: 8),
         child,
       ],

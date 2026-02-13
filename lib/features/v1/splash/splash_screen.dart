@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:movie_app/core/constants/app_color.dart';
 import 'package:movie_app/core/constants/storage_constants.dart';
+import 'package:movie_app/providers/auth_provider.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -12,27 +14,31 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> {
-  void init() async {
-    final pref = await SharedPreferences.getInstance();
-    bool isFirstTime = pref.getBool(StorageConstants.firstTime) ?? true;
+  @override
+  void initState() {
+    super.initState();
+    _checkNavigation();
+  }
 
-    await Future.delayed(Duration(seconds: 1));
+  Future<void> _checkNavigation() async {
+    final prefs = await SharedPreferences.getInstance();
+    final isFirstTime = prefs.getBool(StorageConstants.firstTime) ?? true;
+
+    if (!mounted) return;
+    final authProvider = context.read<AuthProvider>();
+    await authProvider.sessionLoaded;
 
     if (!mounted) return;
 
     if (isFirstTime) {
-      context.pushReplacementNamed('onboarding');
+      context.go('/onboarding');
+      return;
+    } else if (authProvider.isLoggedIn) {
+      if (mounted) context.go('/home');
       return;
     } else {
-      context.pushReplacementNamed('signup');
-      return;
+      if (mounted) context.go('/signup');
     }
-  }
-
-  @override
-  void initState() {
-    init();
-    super.initState();
   }
 
   @override
@@ -41,13 +47,13 @@ class _SplashScreenState extends State<SplashScreen> {
       body: SafeArea(
         child: Center(
           child: Column(
-            mainAxisSize: .min,
+            mainAxisSize: MainAxisSize.min,
             children: [
-              Spacer(flex: 2),
+              const Spacer(flex: 2),
               Image.asset('assets/logos/app_logo.png', height: 125, width: 125),
-              Spacer(flex: 2),
-              CircularProgressIndicator(color: AppColor.white),
-              Spacer(flex: 2),
+              const Spacer(flex: 2),
+              const CircularProgressIndicator(color: AppColor.white),
+              const Spacer(flex: 2),
             ],
           ),
         ),

@@ -2,9 +2,11 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:movie_app/core/constants/app_color.dart';
+import 'package:movie_app/core/constants/app_textstyle.dart';
 import 'package:movie_app/shared/button/custom_button.dart';
 import 'package:movie_app/shared/button/socials_button.dart';
 import 'package:movie_app/shared/indicator/line_divider.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class SignupScreen extends StatefulWidget {
   const SignupScreen({super.key});
@@ -14,6 +16,13 @@ class SignupScreen extends StatefulWidget {
 }
 
 class _SignupScreenState extends State<SignupScreen> {
+  void _launchURLBrowser() async {
+    var url = Uri.parse("https://www.themoviedb.org/signup/");
+    if (!await launchUrl(url, mode: LaunchMode.externalApplication)) {
+      throw Exception('Could not launch $url');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -40,38 +49,37 @@ class _SignupScreenState extends State<SignupScreen> {
                     SizedBox(height: 25),
                     Text(
                       'ClipIt',
-                      style: TextStyle(
+                      style: AppTextStyle.h1SemiBold.copyWith(
                         color: AppColor.white,
-                        fontSize: 28,
-                        fontWeight: FontWeight.w600,
                       ),
                     ),
                     SizedBox(height: 15),
                     Text(
                       'Enter your registered\nPhone Number to Sign Up',
-                      style: TextStyle(
+                      style: AppTextStyle.h5SemiBold.copyWith(
                         color: AppColor.grey,
-                        fontSize: 18,
-                        fontWeight: FontWeight.w600,
                       ),
                       textAlign: .center,
                     ),
                     SizedBox(height: 75),
-                    CustomButton(title: 'Sign Up', onPressed: () {}),
+                    CustomButton(
+                      title: 'Sign Up',
+                      onPressed: _launchURLBrowser,
+                    ),
                     SizedBox(height: 40),
                     RichText(
                       text: TextSpan(
-                        style: TextStyle(
+                        style: AppTextStyle.h4Medium.copyWith(
                           color: AppColor.grey,
-                          fontSize: 16,
-                          fontWeight: FontWeight.w500,
                         ),
                         children: [
                           TextSpan(text: 'I already have an account?'),
                           TextSpan(text: '  '),
                           TextSpan(
                             text: 'Login',
-                            style: TextStyle(color: AppColor.redAccent),
+                            style: AppTextStyle.h4Medium.copyWith(
+                              color: AppColor.redAccent,
+                            ),
                             recognizer: TapGestureRecognizer()
                               ..onTap = () => context.pushNamed('login'),
                           ),
@@ -87,10 +95,8 @@ class _SignupScreenState extends State<SignupScreen> {
                         SizedBox(width: 15),
                         Text(
                           'Or Sign up with',
-                          style: TextStyle(
+                          style: AppTextStyle.h5Medium.copyWith(
                             color: AppColor.grey,
-                            fontSize: 14,
-                            fontWeight: FontWeight.w600,
                           ),
                           textAlign: .center,
                         ),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:movie_app/core/constants/app_color.dart';
+import 'package:movie_app/core/constants/app_textstyle.dart';
 
 class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   final IconData? leading;
@@ -35,11 +36,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
       centerTitle: true,
       title: Text(
         title,
-        style: TextStyle(
-          color: AppColor.white,
-          fontSize: 18,
-          fontWeight: FontWeight.w600,
-        ),
+        style: AppTextStyle.h3SemiBold.copyWith(color: AppColor.white),
       ),
       actions: actions,
     );

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:movie_app/core/constants/app_color.dart';
+import 'package:movie_app/core/constants/app_textstyle.dart';
 
 class CustomTextFormField extends StatefulWidget {
   final TextEditingController? controller;
@@ -9,7 +10,7 @@ class CustomTextFormField extends StatefulWidget {
   final TextInputType keyboardType;
   final bool obscureText;
   final String? Function(String?)? validator;
-  final int? maxLine;
+  final int maxLines;
 
   const CustomTextFormField({
     super.key,
@@ -20,7 +21,7 @@ class CustomTextFormField extends StatefulWidget {
     this.keyboardType = TextInputType.text,
     this.obscureText = false,
     this.validator,
-    this.maxLine = 1,
+    this.maxLines = 1,
   });
 
   @override
@@ -37,6 +38,14 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
   }
 
   @override
+  void didUpdateWidget(covariant CustomTextFormField oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.obscureText != widget.obscureText) {
+      _isObscured = widget.obscureText;
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     return TextFormField(
       controller: widget.controller,
@@ -44,15 +53,20 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
       keyboardType: widget.keyboardType,
       obscureText: _isObscured,
       validator: widget.validator,
-      maxLines: widget.maxLine,
+      maxLines: widget.obscureText ? 1 : widget.maxLines,
+      style: AppTextStyle.h5Regular.copyWith(color: AppColor.white),
       decoration: InputDecoration(
         prefixIcon: widget.prefix != null ? Icon(widget.prefix) : null,
         prefixIconColor: AppColor.grey,
         filled: true,
         fillColor: AppColor.soft,
         hintText: widget.hintText,
-        hintStyle: TextStyle(color: AppColor.grey, fontSize: 14),
-        errorStyle: TextStyle(fontSize: 12, color: AppColor.redAccent),
+        hintStyle: AppTextStyle.h5Regular.copyWith(color: AppColor.grey),
+        errorStyle: AppTextStyle.h6Regular.copyWith(color: AppColor.redAccent),
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 20,
+          vertical: 18,
+        ),
         border: _border(),
         enabledBorder: _border(),
         focusedBorder: _border(color: AppColor.grey),
