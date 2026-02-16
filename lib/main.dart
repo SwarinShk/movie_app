@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:movie_app/core/constants/app_color.dart';
 import 'package:movie_app/providers/auth_provider.dart';
+import 'package:movie_app/providers/movie_detail_provider.dart';
+import 'package:movie_app/providers/movie_provider.dart';
 import 'package:movie_app/router/router.dart';
 import 'package:provider/provider.dart';
 
@@ -12,7 +13,11 @@ void main() async {
 
   runApp(
     MultiProvider(
-      providers: [ChangeNotifierProvider(create: (_) => AuthProvider())],
+      providers: [
+        ChangeNotifierProvider(create: (_) => AuthProvider()),
+        ChangeNotifierProvider(create: (_) => MovieProvider()),
+        ChangeNotifierProvider(create: (_) => MovieDetailProvider()),
+      ],
       child: const MainApp(),
     ),
   );
@@ -31,12 +36,7 @@ class MainApp extends StatelessWidget {
         fontFamily: 'Montserrat',
         primaryColor: AppColor.dark,
         scaffoldBackgroundColor: AppColor.dark,
-        appBarTheme: AppBarTheme(
-          backgroundColor: AppColor.dark,
-          systemOverlayStyle: SystemUiOverlayStyle(
-            statusBarColor: AppColor.black,
-          ),
-        ),
+        appBarTheme: AppBarTheme(backgroundColor: AppColor.dark),
         bottomNavigationBarTheme: BottomNavigationBarThemeData(
           backgroundColor: AppColor.dark,
         ),

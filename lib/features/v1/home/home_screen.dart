@@ -1,13 +1,41 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:movie_app/core/constants/app_color.dart';
-import 'package:movie_app/core/constants/app_textstyle.dart';
+import 'package:movie_app/features/v1/home/widget/movie_area.dart';
+import 'package:movie_app/features/v1/home/widget/movie_horizontal_list.dart';
+import 'package:movie_app/features/v1/home/widget/movie_swiper.dart';
+import 'package:movie_app/models/movie_model.dart';
+import 'package:movie_app/providers/movie_provider.dart';
+import 'package:provider/provider.dart';
 import 'package:movie_app/providers/auth_provider.dart';
 import 'package:movie_app/shared/appbar/home_appbar.dart';
-import 'package:provider/provider.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
+
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  late MovieProvider movieProvider;
+
+  void init() {
+    Future.microtask(() {
+      if (mounted) {
+        movieProvider = context.read<MovieProvider>();
+      }
+      movieProvider.fetchMovies(MovieCategory.nowPlaying);
+      movieProvider.fetchMovies(MovieCategory.popular);
+      movieProvider.fetchMovies(MovieCategory.topRated);
+      movieProvider.fetchMovies(MovieCategory.upcoming);
+    });
+  }
+
+  @override
+  void initState() {
+    init();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -15,37 +43,44 @@ class HomeScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: HomeAppBar(
-        userName: authProvider.account!.username,
-        subtitle: 'Let\'s stream your favorite movie',
+        userName: authProvider.account?.username ?? 'Guest',
+        subtitle: "Let's stream your favorite movie",
         onFavoriteTap: () {
-          context.read<AuthProvider>().logout();
+          authProvider.logout();
           context.goNamed('signup');
         },
       ),
-
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.symmetric(horizontal: 15),
           child: Column(
             crossAxisAlignment: .start,
             children: [
-              SizedBox(height: 20),
-              Text(
-                "Trending Now",
-                style: AppTextStyle.h4SemiBold.copyWith(color: AppColor.white),
+              const SizedBox(height: 20),
+              MovieArea(
+                title: 'Upcoming Movies',
+                onPressed: () {},
+                child: MovieSwiper(category: MovieCategory.upcoming),
               ),
-              SizedBox(height: 15),
-              SizedBox(
-                height: 180,
-                child: Center(
-                  child: Text(
-                    "Movie List Here",
-                    style: AppTextStyle.h4SemiBold.copyWith(
-                      color: AppColor.white,
-                    ),
-                  ),
-                ),
+              const SizedBox(height: 20),
+              MovieArea(
+                title: 'Now Playing',
+                onPressed: () {},
+                child: MovieHorizontalList(category: MovieCategory.nowPlaying),
               ),
+              const SizedBox(height: 20),
+              MovieArea(
+                title: 'Top Rated Movies',
+                onPressed: () {},
+                child: MovieHorizontalList(category: MovieCategory.topRated),
+              ),
+              const SizedBox(height: 20),
+              MovieArea(
+                title: 'Popular Movies',
+                onPressed: () {},
+                child: MovieHorizontalList(category: MovieCategory.popular),
+              ),
+              const SizedBox(height: 20),
             ],
           ),
         ),

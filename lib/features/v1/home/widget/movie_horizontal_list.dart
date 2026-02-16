@@ -1,0 +1,109 @@
+import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:movie_app/core/constants/app_color.dart';
+import 'package:movie_app/core/constants/app_textstyle.dart';
+import 'package:movie_app/features/v1/home/widget/loading_card.dart';
+import 'package:movie_app/models/movie_model.dart';
+import 'package:movie_app/providers/movie_provider.dart';
+import 'package:movie_app/shared/badge/rating_badge.dart';
+import 'package:provider/provider.dart';
+import 'package:skeletonizer/skeletonizer.dart';
+
+class MovieHorizontalList extends StatelessWidget {
+  final MovieCategory category;
+
+  const MovieHorizontalList({required this.category, super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Consumer<MovieProvider>(
+      builder: (context, provider, _) {
+        final movies = provider.movies[category] ?? [];
+        final isLoading = provider.isLoading[category] ?? false;
+
+        return SizedBox(
+          height: 240,
+          child: Skeletonizer(
+            enabled: isLoading,
+            child: ListView.separated(
+              scrollDirection: Axis.horizontal,
+              itemCount: isLoading ? 7 : movies.length,
+              separatorBuilder: (_, _) => const SizedBox(width: 10),
+              itemBuilder: (context, index) {
+                if (isLoading) {
+                  return LoadingCard(width: 150, borderRadius: 12);
+                } else {
+                  final movie = movies[index];
+                  return GestureDetector(
+                    onTap: () {
+                      context.push('/moviedetail/${movie.id}');
+                    },
+                    child: Container(
+                      width: 150,
+                      decoration: BoxDecoration(
+                        color: AppColor.soft,
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Expanded(
+                            child: Container(
+                              width: double.infinity,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.vertical(
+                                  top: Radius.circular(12),
+                                ),
+                                image: DecorationImage(
+                                  image: NetworkImage(
+                                    "https://image.tmdb.org/t/p/w500${movie.posterPath}",
+                                  ),
+                                  fit: BoxFit.cover,
+                                ),
+                              ),
+                              padding: EdgeInsets.all(8),
+                              child: Align(
+                                alignment: Alignment.topRight,
+                                child: RatingBadge(rating: movie.voteAverage),
+                              ),
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.all(8),
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  movie.title,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: AppTextStyle.h5SemiBold.copyWith(
+                                    color: AppColor.white,
+                                  ),
+                                ),
+                                const SizedBox(height: 4),
+                                Text(
+                                  movie.overview,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: AppTextStyle.h6Medium.copyWith(
+                                    color: AppColor.grey,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
+                }
+              },
+            ),
+          ),
+        );
+      },
+    );
+  }
+}

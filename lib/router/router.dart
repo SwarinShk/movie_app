@@ -1,5 +1,6 @@
 import 'package:go_router/go_router.dart';
 import 'package:movie_app/features/v1/dashboard/dashboard_shell.dart';
+import 'package:movie_app/features/v1/detail/movie_detail_screen.dart';
 import 'package:movie_app/features/v1/home/home_screen.dart';
 import 'package:movie_app/features/v1/search/search_screen.dart';
 import 'package:movie_app/features/v1/download/download_screen.dart';
@@ -73,6 +74,13 @@ final GoRouter router = GoRouter(
           ],
         ),
       ],
+    ),
+    GoRoute(
+      path: '/moviedetail/:id',
+      builder: (context, state) {
+        final movieId = int.parse(state.pathParameters['id']!);
+        return MovieDetailScreen(movieId: movieId);
+      },
     ),
   ],
 );

@@ -7,6 +7,7 @@ import 'package:movie_app/core/constants/app_validator.dart';
 import 'package:movie_app/providers/auth_provider.dart';
 import 'package:movie_app/shared/appbar/custom_appbar.dart';
 import 'package:movie_app/shared/button/custom_button.dart';
+import 'package:movie_app/shared/button/custom_text_button.dart';
 import 'package:movie_app/shared/card/labeled_field.dart';
 import 'package:movie_app/shared/textfield/custom_text_form_field.dart';
 import 'package:provider/provider.dart';
@@ -82,20 +83,9 @@ class _LoginScreenState extends State<LoginScreen> {
                 const SizedBox(height: 20),
                 Align(
                   alignment: Alignment.centerRight,
-                  child: TextButton(
+                  child: CustomTextButton(
+                    title: 'Forgot Password?',
                     onPressed: () {},
-                    style: TextButton.styleFrom(
-                      foregroundColor: AppColor.lineDark,
-                      padding: EdgeInsets.zero,
-                      minimumSize: Size.zero,
-                      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                    ),
-                    child: Text(
-                      'Forgot Password?',
-                      style: AppTextStyle.h5Medium.copyWith(
-                        color: AppColor.redAccent,
-                      ),
-                    ),
                   ),
                 ),
                 const SizedBox(height: 40),
