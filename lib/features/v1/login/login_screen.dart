@@ -33,7 +33,8 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final authProvider = context.read<AuthProvider>();
+    // Use watch to rebuild when isLoading changes
+    final authProvider = context.watch<AuthServiceProvider>();
 
     return Scaffold(
       appBar: CustomAppBar(
@@ -90,26 +91,28 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
                 const SizedBox(height: 40),
                 CustomButton(
-                  title: 'Log In',
-                  onPressed: () async {
-                    if (!_formKey.currentState!.validate()) return;
+                  title: authProvider.isLoading ? 'Logging In...' : 'Log In',
+                  onPressed: authProvider.isLoading
+                      ? null
+                      : () async {
+                          if (!_formKey.currentState!.validate()) return;
 
-                    bool success = await authProvider.login(
-                      username: _emailController.text.trim(),
-                      password: _passwordController.text.trim(),
-                    );
+                          bool success = await authProvider.login(
+                            username: _emailController.text.trim(),
+                            password: _passwordController.text.trim(),
+                          );
 
-                    if (success) {
-                      if (context.mounted) {
-                        context.go('/home');
-                      }
-                    } else {
-                      Fluttertoast.showToast(
-                        msg: 'Login failed. Please try again.',
-                        backgroundColor: AppColor.redAccent,
-                      );
-                    }
-                  },
+                          if (success) {
+                            if (context.mounted) {
+                              context.go('/home');
+                            }
+                          } else {
+                            Fluttertoast.showToast(
+                              msg: 'Login failed. Please try again.',
+                              backgroundColor: AppColor.redAccent,
+                            );
+                          }
+                        },
                 ),
                 const SizedBox(height: 30),
               ],

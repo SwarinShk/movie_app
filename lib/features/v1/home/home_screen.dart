@@ -3,7 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:movie_app/features/v1/home/widget/movie_area.dart';
 import 'package:movie_app/features/v1/home/widget/movie_horizontal_list.dart';
 import 'package:movie_app/features/v1/home/widget/movie_swiper.dart';
-import 'package:movie_app/models/movie_model.dart';
+import 'package:movie_app/models/movie_category_model.dart';
 import 'package:movie_app/providers/movie_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:movie_app/providers/auth_provider.dart';
@@ -39,16 +39,14 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final authProvider = context.read<AuthProvider>();
+    final authProvider = context.read<AuthServiceProvider>();
 
     return Scaffold(
       appBar: HomeAppBar(
         userName: authProvider.account?.username ?? 'Guest',
         subtitle: "Let's stream your favorite movie",
-        onFavoriteTap: () {
-          authProvider.logout();
-          context.goNamed('signup');
-        },
+        avatar: authProvider.account?.avatar,
+        onFavoriteTap: () {},
       ),
       body: SafeArea(
         child: SingleChildScrollView(
@@ -59,25 +57,33 @@ class _HomeScreenState extends State<HomeScreen> {
               const SizedBox(height: 20),
               MovieArea(
                 title: 'Upcoming Movies',
-                onPressed: () {},
+                onPressed: () {
+                  context.push('/movielist/${MovieCategory.upcoming.name}');
+                },
                 child: MovieSwiper(category: MovieCategory.upcoming),
               ),
               const SizedBox(height: 20),
               MovieArea(
                 title: 'Now Playing',
-                onPressed: () {},
+                onPressed: () {
+                  context.push('/movielist/${MovieCategory.nowPlaying.name}');
+                },
                 child: MovieHorizontalList(category: MovieCategory.nowPlaying),
               ),
               const SizedBox(height: 20),
               MovieArea(
                 title: 'Top Rated Movies',
-                onPressed: () {},
+                onPressed: () {
+                  context.push('/movielist/${MovieCategory.topRated.name}');
+                },
                 child: MovieHorizontalList(category: MovieCategory.topRated),
               ),
               const SizedBox(height: 20),
               MovieArea(
                 title: 'Popular Movies',
-                onPressed: () {},
+                onPressed: () {
+                  context.push('/movielist/${MovieCategory.popular.name}');
+                },
                 child: MovieHorizontalList(category: MovieCategory.popular),
               ),
               const SizedBox(height: 20),

@@ -6,13 +6,13 @@ class CustomButton extends StatelessWidget {
   final double height;
   final double width;
   final String title;
-  final void Function() onPressed;
+  final void Function()? onPressed;
 
   const CustomButton({
     this.height = 55,
     this.width = double.infinity,
     required this.title,
-    required this.onPressed,
+    this.onPressed,
     super.key,
   });
 
@@ -26,6 +26,8 @@ class CustomButton extends StatelessWidget {
           elevation: 0,
           foregroundColor: AppColor.lineDark,
           backgroundColor: AppColor.redAccent,
+          disabledForegroundColor: AppColor.lineDark.withValues(alpha: 0.2),
+          disabledBackgroundColor: AppColor.redAccent.withValues(alpha: 0.2),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadiusGeometry.circular(32),
           ),

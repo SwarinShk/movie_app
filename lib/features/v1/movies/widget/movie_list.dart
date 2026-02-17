@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:movie_app/core/constants/app_color.dart';
 import 'package:movie_app/core/constants/app_textstyle.dart';
-import 'package:movie_app/models/movie_model.dart';
+import 'package:movie_app/models/paginated_movie_model.dart';
 import 'package:movie_app/shared/badge/rating_badge.dart';
 
 class MovieList extends StatelessWidget {

@@ -17,7 +17,9 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
-    _checkNavigation();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _checkNavigation();
+    });
   }
 
   Future<void> _checkNavigation() async {
@@ -25,35 +27,43 @@ class _SplashScreenState extends State<SplashScreen> {
     final isFirstTime = prefs.getBool(StorageConstants.firstTime) ?? true;
 
     if (!mounted) return;
-    final authProvider = context.read<AuthProvider>();
-    await authProvider.sessionLoaded;
+
+    final authProvider = context.read<AuthServiceProvider>();
+
+    // WAIT until provider finishes loading + initialization
+    while (!authProvider.isInitialized) {
+      await Future.delayed(const Duration(milliseconds: 100));
+    }
 
     if (!mounted) return;
 
     if (isFirstTime) {
       context.go('/onboarding');
-      return;
     } else if (authProvider.isLoggedIn) {
-      if (mounted) context.go('/home');
-      return;
+      context.go('/home'); // Go to home if valid session exists
     } else {
-      if (mounted) context.go('/signup');
+      context.go('/signup');
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return const Scaffold(
+      backgroundColor: AppColor.black,
       body: SafeArea(
         child: Center(
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Spacer(flex: 2),
-              Image.asset('assets/logos/app_logo.png', height: 125, width: 125),
-              const Spacer(flex: 2),
-              const CircularProgressIndicator(color: AppColor.white),
-              const Spacer(flex: 2),
+              Spacer(flex: 2),
+              Image(
+                image: AssetImage('assets/logos/app_logo.png'),
+                height: 125,
+                width: 125,
+              ),
+              Spacer(flex: 2),
+              CircularProgressIndicator(color: AppColor.white),
+              Spacer(flex: 2),
             ],
           ),
         ),

@@ -1,7 +1,9 @@
 import 'package:go_router/go_router.dart';
+import 'package:movie_app/core/helpers/route_helper/router_transition.dart';
 import 'package:movie_app/features/v1/dashboard/dashboard_shell.dart';
-import 'package:movie_app/features/v1/detail/movie_detail_screen.dart';
+import 'package:movie_app/features/v1/movies/movie_detail_screen.dart';
 import 'package:movie_app/features/v1/home/home_screen.dart';
+import 'package:movie_app/features/v1/movies/movie_list_screen.dart';
 import 'package:movie_app/features/v1/search/search_screen.dart';
 import 'package:movie_app/features/v1/download/download_screen.dart';
 import 'package:movie_app/features/v1/profile/profile_screen.dart';
@@ -9,6 +11,7 @@ import 'package:movie_app/features/v1/login/login_screen.dart';
 import 'package:movie_app/features/v1/signup/signup_screen.dart';
 import 'package:movie_app/features/v1/onboarding/onboarding_screen.dart';
 import 'package:movie_app/features/v1/splash/splash_screen.dart';
+import 'package:movie_app/models/movie_category_model.dart';
 
 final GoRouter router = GoRouter(
   initialLocation: '/splash',
@@ -17,22 +20,38 @@ final GoRouter router = GoRouter(
     GoRoute(
       name: 'splash',
       path: '/splash',
-      builder: (context, state) => const SplashScreen(),
+      pageBuilder: (context, state) => CustomTransitionPage(
+        key: state.pageKey,
+        child: const SplashScreen(),
+        transitionsBuilder: fadeTransition,
+      ),
     ),
     GoRoute(
       name: 'onboarding',
       path: '/onboarding',
-      builder: (context, state) => const OnboardingScreen(),
+      pageBuilder: (context, state) => CustomTransitionPage(
+        key: state.pageKey,
+        child: const OnboardingScreen(),
+        transitionsBuilder: fadeTransition,
+      ),
     ),
     GoRoute(
       name: 'login',
       path: '/login',
-      builder: (context, state) => const LoginScreen(),
+      pageBuilder: (context, state) => CustomTransitionPage(
+        key: state.pageKey,
+        child: const LoginScreen(),
+        transitionsBuilder: slideTransition,
+      ),
     ),
     GoRoute(
       name: 'signup',
       path: '/signup',
-      builder: (context, state) => const SignupScreen(),
+      pageBuilder: (context, state) => CustomTransitionPage(
+        key: state.pageKey,
+        child: const SignupScreen(),
+        transitionsBuilder: slideTransition,
+      ),
     ),
 
     // MAIN APP (TABS)
@@ -45,7 +64,11 @@ final GoRouter router = GoRouter(
           routes: [
             GoRoute(
               path: '/home',
-              builder: (context, state) => const HomeScreen(),
+              pageBuilder: (context, state) => CustomTransitionPage(
+                key: state.pageKey,
+                child: const HomeScreen(),
+                transitionsBuilder: fadeTransition,
+              ),
             ),
           ],
         ),
@@ -53,7 +76,11 @@ final GoRouter router = GoRouter(
           routes: [
             GoRoute(
               path: '/search',
-              builder: (context, state) => const SearchScreen(),
+              pageBuilder: (context, state) => CustomTransitionPage(
+                key: state.pageKey,
+                child: const SearchScreen(),
+                transitionsBuilder: fadeTransition,
+              ),
             ),
           ],
         ),
@@ -61,7 +88,11 @@ final GoRouter router = GoRouter(
           routes: [
             GoRoute(
               path: '/download',
-              builder: (context, state) => const DownloadScreen(),
+              pageBuilder: (context, state) => CustomTransitionPage(
+                key: state.pageKey,
+                child: const DownloadScreen(),
+                transitionsBuilder: fadeTransition,
+              ),
             ),
           ],
         ),
@@ -69,17 +100,41 @@ final GoRouter router = GoRouter(
           routes: [
             GoRoute(
               path: '/profile',
-              builder: (context, state) => const ProfileScreen(),
+              pageBuilder: (context, state) => CustomTransitionPage(
+                key: state.pageKey,
+                child: const ProfileScreen(),
+                transitionsBuilder: fadeTransition,
+              ),
             ),
           ],
         ),
       ],
     ),
+
     GoRoute(
       path: '/moviedetail/:id',
-      builder: (context, state) {
+      pageBuilder: (context, state) {
         final movieId = int.parse(state.pathParameters['id']!);
-        return MovieDetailScreen(movieId: movieId);
+        return CustomTransitionPage(
+          key: state.pageKey,
+          child: MovieDetailScreen(movieId: movieId),
+          transitionsBuilder: slideTransition,
+        );
+      },
+    ),
+    GoRoute(
+      path: '/movielist/:category',
+      pageBuilder: (context, state) {
+        final categoryParam = state.pathParameters['category']!;
+        final category = MovieCategory.values.firstWhere(
+          (e) => e.name == categoryParam,
+        );
+
+        return CustomTransitionPage(
+          key: state.pageKey,
+          child: MovieListScreen(category: category),
+          transitionsBuilder: slideTransition,
+        );
       },
     ),
   ],

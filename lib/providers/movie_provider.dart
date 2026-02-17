@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:movie_app/models/movie_model.dart';
+import 'package:movie_app/models/movie_category_model.dart';
+import 'package:movie_app/models/paginated_movie_model.dart';
 import 'package:movie_app/services/tmdb_service.dart';
 
 class MovieProvider extends ChangeNotifier {
@@ -26,21 +27,43 @@ class MovieProvider extends ChangeNotifier {
     MovieCategory.topRated: null,
   };
 
+  Map<MovieCategory, int> currentPage = {
+    MovieCategory.nowPlaying: 1,
+    MovieCategory.upcoming: 1,
+    MovieCategory.popular: 1,
+    MovieCategory.topRated: 1,
+  };
+
+  Map<MovieCategory, int> totalPages = {
+    MovieCategory.nowPlaying: 1,
+    MovieCategory.upcoming: 1,
+    MovieCategory.popular: 1,
+    MovieCategory.topRated: 1,
+  };
+
+  Map<MovieCategory, bool> isFetchingMore = {
+    MovieCategory.nowPlaying: false,
+    MovieCategory.upcoming: false,
+    MovieCategory.popular: false,
+    MovieCategory.topRated: false,
+  };
+
   Future<void> fetchMovies(MovieCategory category) async {
+    currentPage[category] = 1;
+    movies[category] = [];
+
     isLoading[category] = true;
     error[category] = null;
     notifyListeners();
 
-    final endpoint = _getEndpoint(category);
-
     try {
-      isLoading[category] = true;
-      error[category] = null;
-      notifyListeners();
-
-      final response = await tmdbService.getMovies('movie/$endpoint');
+      final response = await tmdbService.getMovies(
+        'movie/${category.apiPath}',
+        queryParameters: {'page': '1'},
+      );
 
       movies[category] = response.results;
+      totalPages[category] = response.totalPages;
     } catch (e) {
       error[category] = e.toString();
     } finally {
@@ -49,16 +72,29 @@ class MovieProvider extends ChangeNotifier {
     }
   }
 
-  String _getEndpoint(MovieCategory category) {
-    switch (category) {
-      case MovieCategory.nowPlaying:
-        return 'now_playing';
-      case MovieCategory.upcoming:
-        return 'upcoming';
-      case MovieCategory.popular:
-        return 'popular';
-      case MovieCategory.topRated:
-        return 'top_rated';
+  Future<void> fetchNextPage(MovieCategory category) async {
+    if (isFetchingMore[category] == true) return;
+
+    if (currentPage[category]! >= totalPages[category]!) return;
+
+    isFetchingMore[category] = true;
+    notifyListeners();
+
+    try {
+      final nextPage = currentPage[category]! + 1;
+
+      final response = await tmdbService.getMovies(
+        'movie/${category.apiPath}',
+        queryParameters: {'page': nextPage.toString()},
+      );
+
+      movies[category]!.addAll(response.results);
+      currentPage[category] = nextPage;
+    } catch (e) {
+      error[category] = e.toString();
+    } finally {
+      isFetchingMore[category] = false;
+      notifyListeners();
     }
   }
 }

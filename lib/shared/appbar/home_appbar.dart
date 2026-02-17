@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:movie_app/core/constants/app_color.dart';
 import 'package:movie_app/core/constants/app_textstyle.dart';
+import 'package:movie_app/models/account_model.dart';
+import 'package:movie_app/shared/avatar/avatar_widget.dart';
 
 class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
   final String userName;
   final String subtitle;
   final VoidCallback? onFavoriteTap;
-  final Widget? avatar;
+  final Avatar? avatar;
 
   const HomeAppBar({
     super.key,
@@ -21,18 +23,13 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context) {
+    const horizontalPadding = 15.0;
+
     return AppBar(
       elevation: 0,
       leading: Padding(
-        padding: const EdgeInsets.only(left: 15),
-        child: CircleAvatar(
-          backgroundColor: AppColor.orange,
-          radius: 20,
-          child: Text(
-            _getInitials(userName),
-            style: AppTextStyle.h4SemiBold.copyWith(color: AppColor.white),
-          ),
-        ),
+        padding: const EdgeInsets.only(left: horizontalPadding),
+        child: AvatarWidget(avatar: avatar, userName: userName),
       ),
       title: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -51,7 +48,7 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
       ),
       actions: [
         Padding(
-          padding: const EdgeInsets.only(right: 15),
+          padding: const EdgeInsets.only(right: horizontalPadding),
           child: IconButton.filled(
             onPressed: onFavoriteTap,
             icon: const Icon(Icons.favorite),
@@ -66,13 +63,5 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
         ),
       ],
     );
-  }
-
-  String _getInitials(String name) {
-    final parts = name.trim().split(' ');
-    if (parts.length == 1) {
-      return parts.first.substring(0, 1).toUpperCase();
-    }
-    return (parts.first[0] + parts.last[0]).toUpperCase();
   }
 }

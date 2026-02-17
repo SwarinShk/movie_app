@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:movie_app/models/movie_credits_model.dart';
 import 'package:movie_app/models/movie_detail_model.dart';
-import 'package:movie_app/models/movie_model.dart';
+import 'package:movie_app/models/paginated_movie_model.dart';
 import '../services/tmdb_service.dart';
 
 class MovieDetailProvider extends ChangeNotifier {
