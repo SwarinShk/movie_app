@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:movie_app/core/constants/app_color.dart';
-import 'package:movie_app/providers/auth_provider.dart';
-import 'package:movie_app/providers/movie_detail_provider.dart';
-import 'package:movie_app/providers/movie_provider.dart';
-import 'package:movie_app/router/router.dart';
+import 'package:movie_app/features/auth/presentation/providers/auth_provider.dart';
+import 'package:movie_app/features/movie/presentation/providers/movie_detail_provider.dart';
+import 'package:movie_app/features/movie/presentation/providers/movie_provider.dart';
+import 'package:movie_app/features/search/presentation/providers/search_provider.dart';
+import 'package:movie_app/core/routes/router.dart';
 import 'package:provider/provider.dart';
 
 void main() async {
@@ -17,6 +18,7 @@ void main() async {
         ChangeNotifierProvider(create: (_) => AuthServiceProvider()),
         ChangeNotifierProvider(create: (_) => MovieProvider()),
         ChangeNotifierProvider(create: (_) => MovieDetailProvider()),
+        ChangeNotifierProvider(create: (_) => SearchProvider()),
       ],
       child: const MainApp(),
     ),
