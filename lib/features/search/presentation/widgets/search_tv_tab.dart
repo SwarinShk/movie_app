@@ -1,24 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:movie_app/core/constants/app_color.dart';
 import 'package:movie_app/features/search/presentation/widgets/empty_search_state.dart';
-import 'package:movie_app/features/search/presentation/widgets/person_card.dart';
-import 'package:movie_app/features/search/presentation/widgets/poster_card.dart';
-import 'package:movie_app/features/search/data/models/search_model.dart';
+import 'package:movie_app/features/tv/data/models/tv_model.dart';
+import 'package:movie_app/features/tv/presentation/widgets/tv_list_item.dart';
 
-class SearchTabContent extends StatelessWidget {
-  final List<SearchResult> items;
+class SearchTvTab extends StatelessWidget {
+  final List<Result> items;
   final bool isLoading;
   final bool isFetchingMore;
   final String query;
-  final bool isPersonTab;
   final ScrollController scrollController;
 
-  const SearchTabContent({
+  const SearchTvTab({
     required this.items,
     required this.isLoading,
     required this.isFetchingMore,
     required this.query,
-    required this.isPersonTab,
     required this.scrollController,
     super.key,
   });
@@ -49,7 +46,7 @@ class SearchTabContent extends StatelessWidget {
           }
 
           final item = items[index];
-          return isPersonTab ? PersonCard(item: item) : PosterCard(item: item);
+          return TvListItem(tv: item);
         },
       );
     }

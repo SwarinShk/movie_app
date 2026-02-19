@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:movie_app/features/movie/data/models/movie_credits_model.dart';
 import 'package:movie_app/features/movie/data/models/movie_detail_model.dart';
 import 'package:movie_app/features/movie/data/models/paginated_movie_model.dart';
-import 'package:movie_app/features/movie/data/services/tmdb_service.dart';
+import 'package:movie_app/features/movie/data/services/movie_service.dart';
 
 class MovieDetailProvider extends ChangeNotifier {
-  final TMDBService _service = TMDBService();
+  final MovieService _service = MovieService();
 
   MovieDetail? _movie;
   MovieCredits? _credit;

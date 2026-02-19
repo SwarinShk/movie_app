@@ -1,28 +1,27 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
-import 'package:movie_app/core/constants/app_color.dart';
 import 'package:movie_app/common/styles/app_textstyle.dart';
-import 'package:movie_app/features/movie/presentation/providers/movie_provider.dart';
-import 'package:movie_app/features/movie/data/models/movie_category_model.dart';
 import 'package:movie_app/common/widgets/badge/rating_badge.dart';
+import 'package:movie_app/core/constants/app_color.dart';
+import 'package:movie_app/features/tv/data/models/tv_category_model.dart';
+import 'package:movie_app/features/tv/presentation/providers/tv_provider.dart';
 import 'package:provider/provider.dart';
 
-class MovieHorizontalList extends StatelessWidget {
-  final MovieCategory category;
+class TvHorizontalList extends StatelessWidget {
+  final TvCategory category;
 
-  const MovieHorizontalList({required this.category, super.key});
+  const TvHorizontalList({required this.category, super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<MovieProvider>(
+    return Consumer<TvProvider>(
       builder: (context, provider, _) {
-        final data = provider.movies(category);
-        final movies = data?.results ?? [];
+        final data = provider.tvs(category);
+        final tvs = data?.results ?? [];
         final isLoading = provider.isLoading(category);
 
-        final displayMovies = movies.take(10).toList();
+        final displaytvs = tvs.take(10).toList();
 
-        if (isLoading && movies.isEmpty) {
+        if (isLoading && tvs.isEmpty) {
           return const SizedBox(
             height: 240,
             child: Center(
@@ -31,12 +30,12 @@ class MovieHorizontalList extends StatelessWidget {
           );
         }
 
-        if (displayMovies.isEmpty) {
+        if (displaytvs.isEmpty) {
           return const SizedBox(
             height: 240,
             child: Center(
               child: Text(
-                "No movies available",
+                "No tv shows available",
                 style: TextStyle(color: Colors.grey),
               ),
             ),
@@ -47,15 +46,13 @@ class MovieHorizontalList extends StatelessWidget {
           height: 240,
           child: ListView.separated(
             scrollDirection: Axis.horizontal,
-            itemCount: displayMovies.length,
+            itemCount: displaytvs.length,
             separatorBuilder: (_, _) => const SizedBox(width: 10),
             itemBuilder: (context, index) {
-              final movie = displayMovies[index];
+              final tv = displaytvs[index];
 
               return GestureDetector(
-                onTap: () {
-                  context.push('/moviedetail/${movie.id}');
-                },
+                onTap: () {},
                 child: Container(
                   width: 150,
                   decoration: BoxDecoration(
@@ -73,9 +70,9 @@ class MovieHorizontalList extends StatelessWidget {
                               top: Radius.circular(12),
                             ),
                             image: DecorationImage(
-                              image: movie.posterPath != null
+                              image: tv.posterPath.isNotEmpty
                                   ? NetworkImage(
-                                      "https://image.tmdb.org/t/p/w500${movie.posterPath}",
+                                      "https://image.tmdb.org/t/p/w500${tv.posterPath}",
                                     )
                                   : const AssetImage(
                                           'assets/images/image_not_found.png',
@@ -87,7 +84,7 @@ class MovieHorizontalList extends StatelessWidget {
                           padding: const EdgeInsets.all(8),
                           child: Align(
                             alignment: Alignment.topRight,
-                            child: RatingBadge(rating: movie.voteAverage),
+                            child: RatingBadge(rating: tv.voteAverage),
                           ),
                         ),
                       ),
@@ -98,7 +95,7 @@ class MovieHorizontalList extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              movie.title,
+                              tv.name,
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                               style: AppTextStyle.h5SemiBold.copyWith(
@@ -107,7 +104,7 @@ class MovieHorizontalList extends StatelessWidget {
                             ),
                             const SizedBox(height: 4),
                             Text(
-                              movie.overview,
+                              tv.overview,
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                               style: AppTextStyle.h6Medium.copyWith(

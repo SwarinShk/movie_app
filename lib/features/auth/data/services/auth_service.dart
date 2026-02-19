@@ -1,14 +1,12 @@
-// auth_service.dart
-
 import 'dart:convert';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
+import 'package:movie_app/config/api_config.dart';
 import 'package:movie_app/features/auth/data/model/account_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class AuthService {
-  final String _baseUrl = dotenv.env['TMDB_BASE_URL']!;
-  final String _apiKey = dotenv.env['TMDB_API_KEY']!;
+  final String _baseUrl = ApiConfig.baseUrl;
+  final String _apiKey = ApiConfig.apiKey;
 
   // Session Persistence
 

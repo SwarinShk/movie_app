@@ -1,59 +1,57 @@
 import 'package:flutter/material.dart';
 import 'package:movie_app/features/movie/data/models/movie_category_model.dart';
 import 'package:movie_app/features/movie/data/models/paginated_movie_model.dart';
-import 'package:movie_app/features/movie/data/services/tmdb_service.dart';
+import 'package:movie_app/features/movie/data/services/movie_service.dart';
 
 class MovieProvider extends ChangeNotifier {
-  final TMDBService tmdbService = TMDBService();
+  final MovieService tmdbService = MovieService();
 
-  Map<MovieCategory, List<Movie>> movies = {
-    MovieCategory.nowPlaying: [],
-    MovieCategory.upcoming: [],
-    MovieCategory.popular: [],
-    MovieCategory.topRated: [],
-  };
-
-  Map<MovieCategory, bool> isLoading = {
-    MovieCategory.nowPlaying: false,
-    MovieCategory.upcoming: false,
-    MovieCategory.popular: false,
-    MovieCategory.topRated: false,
-  };
-
-  Map<MovieCategory, String?> error = {
+  final Map<MovieCategory, PaginatedMovieModel?> _movies = {
     MovieCategory.nowPlaying: null,
     MovieCategory.upcoming: null,
     MovieCategory.popular: null,
     MovieCategory.topRated: null,
   };
 
-  Map<MovieCategory, int> currentPage = {
-    MovieCategory.nowPlaying: 1,
-    MovieCategory.upcoming: 1,
-    MovieCategory.popular: 1,
-    MovieCategory.topRated: 1,
-  };
-
-  Map<MovieCategory, int> totalPages = {
-    MovieCategory.nowPlaying: 1,
-    MovieCategory.upcoming: 1,
-    MovieCategory.popular: 1,
-    MovieCategory.topRated: 1,
-  };
-
-  Map<MovieCategory, bool> isFetchingMore = {
+  final Map<MovieCategory, bool> _isLoading = {
     MovieCategory.nowPlaying: false,
     MovieCategory.upcoming: false,
     MovieCategory.popular: false,
     MovieCategory.topRated: false,
   };
 
-  Future<void> fetchMovies(MovieCategory category) async {
-    currentPage[category] = 1;
-    movies[category] = [];
+  final Map<MovieCategory, bool> _isFetchingMore = {
+    MovieCategory.nowPlaying: false,
+    MovieCategory.upcoming: false,
+    MovieCategory.popular: false,
+    MovieCategory.topRated: false,
+  };
 
-    isLoading[category] = true;
-    error[category] = null;
+  final Map<MovieCategory, String?> _error = {
+    MovieCategory.nowPlaying: null,
+    MovieCategory.upcoming: null,
+    MovieCategory.popular: null,
+    MovieCategory.topRated: null,
+  };
+
+  PaginatedMovieModel? movies(MovieCategory category) => _movies[category];
+
+  bool isLoading(MovieCategory category) => _isLoading[category] ?? false;
+
+  bool isFetchingMore(MovieCategory category) =>
+      _isFetchingMore[category] ?? false;
+
+  String? error(MovieCategory category) => _error[category];
+
+  bool hasMorePages(MovieCategory category) {
+    final data = _movies[category];
+    if (data == null) return false;
+    return data.page < data.totalPages;
+  }
+
+  Future<void> fetchMovies(MovieCategory category) async {
+    _isLoading[category] = true;
+    _error[category] = null;
     notifyListeners();
 
     try {
@@ -62,39 +60,51 @@ class MovieProvider extends ChangeNotifier {
         queryParameters: {'page': '1'},
       );
 
-      movies[category] = response.results;
-      totalPages[category] = response.totalPages;
+      _movies[category] = response;
     } catch (e) {
-      error[category] = e.toString();
+      _error[category] = e.toString();
+      _movies[category] = null;
     } finally {
-      isLoading[category] = false;
+      _isLoading[category] = false;
       notifyListeners();
     }
   }
 
   Future<void> fetchNextPage(MovieCategory category) async {
-    if (isFetchingMore[category] == true) return;
+    if (_isFetchingMore[category] == true ||
+        _isLoading[category] == true ||
+        !hasMorePages(category)) {
+      return;
+    }
 
-    if (currentPage[category]! >= totalPages[category]!) return;
-
-    isFetchingMore[category] = true;
+    _isFetchingMore[category] = true;
     notifyListeners();
 
     try {
-      final nextPage = currentPage[category]! + 1;
+      final currentData = _movies[category];
+      if (currentData == null) return;
+
+      final nextPage = currentData.page + 1;
 
       final response = await tmdbService.getMovies(
         'movie/${category.apiPath}',
         queryParameters: {'page': nextPage.toString()},
       );
 
-      movies[category]!.addAll(response.results);
-      currentPage[category] = nextPage;
+      _movies[category] = currentData.merge(response);
     } catch (e) {
-      error[category] = e.toString();
+      _error[category] = e.toString();
     } finally {
-      isFetchingMore[category] = false;
+      _isFetchingMore[category] = false;
       notifyListeners();
     }
+  }
+
+  void clearCategory(MovieCategory category) {
+    _movies[category] = null;
+    _error[category] = null;
+    _isLoading[category] = false;
+    _isFetchingMore[category] = false;
+    notifyListeners();
   }
 }

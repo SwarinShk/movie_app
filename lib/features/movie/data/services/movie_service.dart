@@ -1,15 +1,14 @@
 import 'dart:convert';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
+import 'package:movie_app/config/api_config.dart';
 import 'package:movie_app/features/movie/data/models/movie_credits_model.dart';
 import 'package:movie_app/features/movie/data/models/movie_detail_model.dart';
 import 'package:movie_app/features/movie/data/models/paginated_movie_model.dart';
-import 'package:movie_app/features/search/data/models/search_model.dart';
 
-class TMDBService {
-  final String baseUrl = dotenv.env['TMDB_BASE_URL']!;
-  final String apiKey = dotenv.env['TMDB_API_KEY']!;
+class MovieService {
+  final String baseUrl = ApiConfig.baseUrl;
+  final String apiKey = ApiConfig.apiKey;
 
   Future<PaginatedMovieModel> getMovies(
     String endpoint, {
@@ -66,23 +65,6 @@ class TMDBService {
       return PaginatedMovieModel.fromJson(json.decode(response.body));
     } else {
       throw Exception("Failed to fetch recommended movies");
-    }
-  }
-
-  Future<SearchModel> fetchSearch(String text, {int page = 1}) async {
-    final uri = Uri.https('api.themoviedb.org', '/3/search/multi', {
-      'api_key': apiKey,
-      'query': text,
-      'page': page.toString(),
-      'include_adult': 'false',
-    });
-
-    final response = await http.get(uri);
-
-    if (response.statusCode == 200) {
-      return SearchModel.fromJson(json.decode(response.body));
-    } else {
-      throw Exception('Search failed (Status: ${response.statusCode})');
     }
   }
 }

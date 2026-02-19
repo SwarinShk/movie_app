@@ -12,6 +12,7 @@ class MovieListScreen extends StatefulWidget {
   final MovieCategory category;
 
   const MovieListScreen({required this.category, super.key});
+
   @override
   State<MovieListScreen> createState() => _MovieListScreenState();
 }
@@ -23,12 +24,14 @@ class _MovieListScreenState extends State<MovieListScreen> {
   void initState() {
     super.initState();
 
-    final provider = context.read<MovieProvider>();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final provider = context.read<MovieProvider>();
 
-    // Initial fetch only if empty
-    if ((provider.movies[widget.category] ?? []).isEmpty) {
-      provider.fetchMovies(widget.category);
-    }
+      // Fetch only if data is null
+      if (provider.movies(widget.category) == null) {
+        provider.fetchMovies(widget.category);
+      }
+    });
 
     _scrollController.addListener(_onScroll);
   }
@@ -52,10 +55,11 @@ class _MovieListScreenState extends State<MovieListScreen> {
   Widget build(BuildContext context) {
     return Consumer<MovieProvider>(
       builder: (context, provider, _) {
-        final movies = provider.movies[widget.category] ?? [];
-        final isLoading = provider.isLoading[widget.category] ?? false;
-        final isFetchingMore =
-            provider.isFetchingMore[widget.category] ?? false;
+        final data = provider.movies(widget.category);
+        final movies = data?.results ?? [];
+        final isLoading = provider.isLoading(widget.category);
+        final isFetchingMore = provider.isFetchingMore(widget.category);
+        final error = provider.error(widget.category);
 
         return Scaffold(
           appBar: CustomAppBar(
@@ -64,33 +68,53 @@ class _MovieListScreenState extends State<MovieListScreen> {
             title: widget.category.title.toTitleCase,
           ),
           body: SafeArea(
-            child: isLoading && movies.isEmpty
-                ? const Center(child: CircularProgressIndicator())
-                : ListView.separated(
-                    controller: _scrollController,
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 15,
-                      vertical: 20,
-                    ),
-                    itemCount: movies.length + (isFetchingMore ? 1 : 0),
-                    separatorBuilder: (_, _) => const SizedBox(height: 15),
-                    itemBuilder: (context, index) {
-                      // Bottom Loader
-                      if (index >= movies.length) {
-                        return const Center(
-                          child: Padding(
-                            padding: EdgeInsets.symmetric(vertical: 20),
-                            child: CircularProgressIndicator(
-                              color: AppColor.white,
-                            ),
-                          ),
-                        );
-                      }
+            child: Builder(
+              builder: (_) {
+                // Initial Loading
+                if (isLoading && movies.isEmpty) {
+                  return const Center(
+                    child: CircularProgressIndicator(color: AppColor.white),
+                  );
+                }
 
-                      final movie = movies[index];
-                      return MovieListItem(movie: movie);
-                    },
+                // Error State
+                if (error != null && movies.isEmpty) {
+                  return Center(
+                    child: Text(
+                      error,
+                      style: const TextStyle(color: Colors.red),
+                    ),
+                  );
+                }
+
+                // List
+                return ListView.separated(
+                  controller: _scrollController,
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 15,
+                    vertical: 20,
                   ),
+                  itemCount: movies.length + (isFetchingMore ? 1 : 0),
+                  separatorBuilder: (_, _) => const SizedBox(height: 15),
+                  itemBuilder: (context, index) {
+                    // Bottom Loader
+                    if (index >= movies.length) {
+                      return const Padding(
+                        padding: EdgeInsets.symmetric(vertical: 20),
+                        child: Center(
+                          child: CircularProgressIndicator(
+                            color: AppColor.white,
+                          ),
+                        ),
+                      );
+                    }
+
+                    final movie = movies[index];
+                    return MovieListItem(movie: movie);
+                  },
+                );
+              },
+            ),
           ),
         );
       },

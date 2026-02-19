@@ -5,7 +5,7 @@ class PaginatedMovieModel {
   final int totalPages;
   final int totalResults;
 
-  PaginatedMovieModel({
+  const PaginatedMovieModel({
     this.dates,
     required this.page,
     required this.results,
@@ -15,10 +15,12 @@ class PaginatedMovieModel {
 
   factory PaginatedMovieModel.fromJson(Map<String, dynamic> json) {
     return PaginatedMovieModel(
-      dates: json['dates'] != null ? Dates.fromJson(json['dates']) : null,
+      dates: json['dates'] != null
+          ? Dates.fromJson(json['dates'] as Map<String, dynamic>)
+          : null,
       page: json['page'] ?? 1,
       results: (json['results'] as List<dynamic>? ?? [])
-          .map((e) => Movie.fromJson(e))
+          .map((e) => Movie.fromJson(e as Map<String, dynamic>))
           .toList(),
       totalPages: json['total_pages'] ?? 1,
       totalResults: json['total_results'] ?? 0,
@@ -34,16 +36,54 @@ class PaginatedMovieModel {
       'total_results': totalResults,
     };
   }
+
+  PaginatedMovieModel merge(PaginatedMovieModel other) {
+    // Avoid merging older or same page
+    if (other.page <= page) return this;
+
+    final existingIds = results.map((e) => e.id).toSet();
+
+    final newResults = other.results
+        .where((movie) => !existingIds.contains(movie.id))
+        .toList();
+
+    return PaginatedMovieModel(
+      dates: other.dates ?? dates,
+      page: other.page,
+      results: [...results, ...newResults],
+      totalPages: other.totalPages,
+      totalResults: other.totalResults,
+    );
+  }
+
+  PaginatedMovieModel copyWith({
+    Dates? dates,
+    int? page,
+    List<Movie>? results,
+    int? totalPages,
+    int? totalResults,
+  }) {
+    return PaginatedMovieModel(
+      dates: dates ?? this.dates,
+      page: page ?? this.page,
+      results: results ?? this.results,
+      totalPages: totalPages ?? this.totalPages,
+      totalResults: totalResults ?? this.totalResults,
+    );
+  }
 }
 
 class Dates {
   final String? maximum;
   final String? minimum;
 
-  Dates({this.maximum, this.minimum});
+  const Dates({this.maximum, this.minimum});
 
   factory Dates.fromJson(Map<String, dynamic> json) {
-    return Dates(maximum: json['maximum'], minimum: json['minimum']);
+    return Dates(
+      maximum: json['maximum'] as String?,
+      minimum: json['minimum'] as String?,
+    );
   }
 
   Map<String, dynamic> toJson() {
@@ -67,7 +107,7 @@ class Movie {
   final double voteAverage;
   final int voteCount;
 
-  Movie({
+  const Movie({
     required this.adult,
     this.backdropPath,
     required this.genreIds,
@@ -87,15 +127,17 @@ class Movie {
   factory Movie.fromJson(Map<String, dynamic> json) {
     return Movie(
       adult: json['adult'] ?? false,
-      backdropPath: json['backdrop_path'],
-      genreIds: List<int>.from(json['genre_ids'] ?? []),
-      id: json['id'],
+      backdropPath: json['backdrop_path'] as String?,
+      genreIds: (json['genre_ids'] as List<dynamic>? ?? [])
+          .map((e) => e as int)
+          .toList(),
+      id: json['id'] ?? 0,
       originalLanguage: json['original_language'] ?? '',
       originalTitle: json['original_title'] ?? '',
       overview: json['overview'] ?? '',
       popularity: (json['popularity'] ?? 0).toDouble(),
-      posterPath: json['poster_path'],
-      releaseDate: json['release_date'],
+      posterPath: json['poster_path'] as String?,
+      releaseDate: json['release_date'] as String?,
       title: json['title'] ?? '',
       video: json['video'] ?? false,
       voteAverage: (json['vote_average'] ?? 0).toDouble(),

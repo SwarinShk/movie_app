@@ -1,74 +1,80 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
-import 'package:movie_app/core/constants/app_color.dart';
+import 'package:intl/intl.dart';
 import 'package:movie_app/common/styles/app_textstyle.dart';
-import 'package:movie_app/features/movie/presentation/widgets/movie_meta_item.dart';
-import 'package:movie_app/features/search/data/models/search_model.dart';
 import 'package:movie_app/common/widgets/badge/rating_badge.dart';
+import 'package:movie_app/core/constants/app_color.dart';
+import 'package:movie_app/features/movie/presentation/widgets/movie_meta_item.dart';
+import 'package:movie_app/features/tv/data/models/tv_model.dart';
 
-class PosterCard extends StatelessWidget {
-  final SearchResult item;
+class TvListItem extends StatelessWidget {
+  final Result tv;
 
-  const PosterCard({required this.item, super.key});
+  const TvListItem({required this.tv, super.key});
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () {
-        context.push('/itemdetail/${item.id}');
-      },
+      onTap: () {},
       child: Row(
         children: [
           Container(
             height: 160,
             width: 125,
-            padding: EdgeInsets.all(8),
+            padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(8),
               image: DecorationImage(
-                image: item.posterPath != null
+                image: tv.posterPath.isNotEmpty
                     ? NetworkImage(
-                        'https://image.tmdb.org/t/p/w500${item.posterPath}',
+                        'https://image.tmdb.org/t/p/w500${tv.posterPath}',
                       )
-                    : AssetImage('assets/images/image_not_found.png'),
+                    : const AssetImage('assets/images/image_not_found.png')
+                          as ImageProvider,
                 fit: BoxFit.cover,
               ),
             ),
             child: Align(
               alignment: Alignment.topLeft,
-              child: RatingBadge(rating: item.voteAverage!),
+              child: RatingBadge(rating: tv.voteAverage),
             ),
           ),
-          SizedBox(width: 15),
+          const SizedBox(width: 15),
           Expanded(
             child: Column(
-              spacing: 12,
-              mainAxisAlignment: .center,
-              crossAxisAlignment: .start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  item.displayTitle,
+                  tv.name,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: AppTextStyle.h5SemiBold.copyWith(
                     color: AppColor.white,
                   ),
                 ),
+                const SizedBox(height: 4),
                 Text(
-                  item.overview!,
+                  tv.overview.isNotEmpty == true
+                      ? tv.overview
+                      : 'No description available.',
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
                   style: AppTextStyle.h5Regular.copyWith(
                     color: AppColor.whiteGrey,
                   ),
-                  maxLines: 2,
                 ),
+                const SizedBox(height: 8),
                 MovieMetaItem(
                   icon: Icons.calendar_month_rounded,
-                  text: item.displayDate,
+                  text: _getReleaseYear(tv.firstAirDate.toString()),
                 ),
+                const SizedBox(height: 8),
                 DecoratedBox(
                   decoration: BoxDecoration(
                     border: Border.all(
-                      color: item.adult ? AppColor.redAccent : AppColor.green,
+                      color: tv.adult == true
+                          ? AppColor.redAccent
+                          : AppColor.green,
                     ),
                     borderRadius: BorderRadius.circular(5),
                   ),
@@ -78,11 +84,12 @@ class PosterCard extends StatelessWidget {
                       vertical: 2,
                     ),
                     child: Text(
-                      item.adult ? 'R-rated' : 'PG-13',
+                      tv.adult == true ? 'R-rated' : 'PG-13',
                       style: AppTextStyle.h6Medium.copyWith(
-                        color: item.adult ? AppColor.redAccent : AppColor.green,
+                        color: tv.adult == true
+                            ? AppColor.redAccent
+                            : AppColor.green,
                       ),
-                      maxLines: 2,
                     ),
                   ),
                 ),
@@ -92,5 +99,16 @@ class PosterCard extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  String _getReleaseYear(String? releaseDate) {
+    if (releaseDate != null && releaseDate.isNotEmpty) {
+      try {
+        return DateFormat.y().format(DateTime.parse(releaseDate));
+      } catch (_) {
+        return 'Unknown';
+      }
+    }
+    return 'Unknown';
   }
 }

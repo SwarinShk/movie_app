@@ -20,18 +20,20 @@ class MovieListItem extends StatelessWidget {
       },
       child: Row(
         children: [
+          // Movie poster + rating badge
           Container(
             height: 160,
             width: 125,
-            padding: EdgeInsets.all(8),
+            padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(8),
               image: DecorationImage(
-                image: movie.posterPath != null
+                image: movie.posterPath != null && movie.posterPath!.isNotEmpty
                     ? NetworkImage(
                         'https://image.tmdb.org/t/p/w500${movie.posterPath}',
                       )
-                    : AssetImage('assets/images/image_not_found.png'),
+                    : const AssetImage('assets/images/image_not_found.png')
+                          as ImageProvider,
                 fit: BoxFit.cover,
               ),
             ),
@@ -40,12 +42,14 @@ class MovieListItem extends StatelessWidget {
               child: RatingBadge(rating: movie.voteAverage),
             ),
           ),
-          SizedBox(width: 15),
+          const SizedBox(width: 15),
+          // Movie details
           Expanded(
             child: Column(
-              spacing: 12,
-              crossAxisAlignment: .start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
+                // Movie title
                 Text(
                   movie.title,
                   maxLines: 1,
@@ -54,23 +58,32 @@ class MovieListItem extends StatelessWidget {
                     color: AppColor.white,
                   ),
                 ),
+                const SizedBox(height: 4),
+                // Movie overview
                 Text(
-                  movie.overview,
+                  movie.overview.isNotEmpty == true
+                      ? movie.overview
+                      : 'No description available.',
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
                   style: AppTextStyle.h5Regular.copyWith(
                     color: AppColor.whiteGrey,
                   ),
-                  maxLines: 2,
                 ),
+                const SizedBox(height: 8),
+                // Release year
                 MovieMetaItem(
                   icon: Icons.calendar_month_rounded,
-                  text: DateFormat.y().format(
-                    DateTime.parse(movie.releaseDate.toString()),
-                  ),
+                  text: _getReleaseYear(movie.releaseDate),
                 ),
+                const SizedBox(height: 8),
+                // Adult rating badge
                 DecoratedBox(
                   decoration: BoxDecoration(
                     border: Border.all(
-                      color: movie.adult ? AppColor.redAccent : AppColor.green,
+                      color: movie.adult == true
+                          ? AppColor.redAccent
+                          : AppColor.green,
                     ),
                     borderRadius: BorderRadius.circular(5),
                   ),
@@ -80,13 +93,12 @@ class MovieListItem extends StatelessWidget {
                       vertical: 2,
                     ),
                     child: Text(
-                      movie.adult ? 'R-rated' : 'PG-13',
+                      movie.adult == true ? 'R-rated' : 'PG-13',
                       style: AppTextStyle.h6Medium.copyWith(
-                        color: movie.adult
+                        color: movie.adult == true
                             ? AppColor.redAccent
                             : AppColor.green,
                       ),
-                      maxLines: 2,
                     ),
                   ),
                 ),
@@ -96,5 +108,17 @@ class MovieListItem extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  // Helper to safely parse release year
+  String _getReleaseYear(String? releaseDate) {
+    if (releaseDate != null && releaseDate.isNotEmpty) {
+      try {
+        return DateFormat.y().format(DateTime.parse(releaseDate));
+      } catch (_) {
+        return 'Unknown';
+      }
+    }
+    return 'Unknown';
   }
 }
