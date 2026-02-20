@@ -8,6 +8,7 @@ import 'package:movie_app/features/search/presentation/providers/search_movie_pr
 import 'package:movie_app/core/routes/router.dart';
 import 'package:movie_app/features/search/presentation/providers/search_person_provider.dart';
 import 'package:movie_app/features/search/presentation/providers/search_tv_provider.dart';
+import 'package:movie_app/features/tv/presentation/providers/tv_detail_provider.dart';
 import 'package:movie_app/features/tv/presentation/providers/tv_provider.dart';
 import 'package:provider/provider.dart';
 
@@ -24,6 +25,7 @@ void main() async {
         ChangeNotifierProvider(create: (_) => MovieDetailProvider()),
 
         ChangeNotifierProvider(create: (_) => TvProvider()),
+        ChangeNotifierProvider(create: (_) => TvDetailProvider()),
 
         ChangeNotifierProvider(create: (_) => SearchMovieProvider()),
         ChangeNotifierProvider(create: (_) => SearchTvProvider()),

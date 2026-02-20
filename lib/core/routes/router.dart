@@ -5,6 +5,9 @@ import 'package:movie_app/features/auth/presentation/screens/onboarding_screen.d
 import 'package:movie_app/features/auth/presentation/screens/signup_screen.dart';
 import 'package:movie_app/features/auth/presentation/screens/splash_screen.dart';
 import 'package:movie_app/features/dashboard/presentation/screens/dashboard_shell.dart';
+import 'package:movie_app/features/tv/data/models/tv_category_model.dart';
+import 'package:movie_app/features/tv/presentation/screens/tv_detail_screen.dart';
+import 'package:movie_app/features/tv/presentation/screens/tv_list_screen.dart';
 import 'package:movie_app/features/wishlist/presentation/screens/wishlist_screen.dart';
 import 'package:movie_app/features/home/presentation/screens/home_screen.dart';
 import 'package:movie_app/features/movie/presentation/screens/movie_detail_screen.dart';
@@ -133,6 +136,33 @@ final GoRouter router = GoRouter(
         return CustomTransitionPage(
           key: state.pageKey,
           child: MovieListScreen(category: category),
+          transitionsBuilder: slideTransition,
+        );
+      },
+    ),
+
+    GoRoute(
+      path: '/tvdetail/:id',
+      pageBuilder: (context, state) {
+        final tvId = int.parse(state.pathParameters['id']!);
+        return CustomTransitionPage(
+          key: state.pageKey,
+          child: TvDetailScreen(tvId: tvId),
+          transitionsBuilder: slideTransition,
+        );
+      },
+    ),
+    GoRoute(
+      path: '/tvlist/:category',
+      pageBuilder: (context, state) {
+        final categoryParam = state.pathParameters['category']!;
+        final category = TvCategory.values.firstWhere(
+          (e) => e.name == categoryParam,
+        );
+
+        return CustomTransitionPage(
+          key: state.pageKey,
+          child: TvListScreen(category: category),
           transitionsBuilder: slideTransition,
         );
       },

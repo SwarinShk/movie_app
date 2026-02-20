@@ -10,7 +10,7 @@ import 'package:movie_app/features/movie/data/models/movie_category_model.dart';
 import 'package:movie_app/features/tv/data/models/tv_category_model.dart';
 import 'package:movie_app/features/tv/presentation/providers/tv_provider.dart';
 import 'package:provider/provider.dart';
-import 'package:movie_app/common/widgets/appbar/home_appbar.dart';
+import 'package:movie_app/features/home/presentation/widgets/home_appbar.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -83,7 +83,7 @@ class _HomeScreenState extends State<HomeScreen> {
               MovieArea(
                 title: 'On The Air TV Shows',
                 onPressed: () {
-                  // context.push('/movielist/${MovieCategory.nowPlaying.name}');
+                  context.push('/tvlist/${TvCategory.onTheAir.name}');
                 },
                 child: TvHorizontalList(category: TvCategory.onTheAir),
               ),
@@ -99,7 +99,7 @@ class _HomeScreenState extends State<HomeScreen> {
               MovieArea(
                 title: 'Top Rated TV Shows',
                 onPressed: () {
-                  // context.push('/movielist/${MovieCategory.nowPlaying.name}');
+                  context.push('/tvlist/${TvCategory.topRated.name}');
                 },
                 child: TvHorizontalList(category: TvCategory.topRated),
               ),
@@ -115,7 +115,7 @@ class _HomeScreenState extends State<HomeScreen> {
               MovieArea(
                 title: 'Popular TV Shows',
                 onPressed: () {
-                  // context.push('/movielist/${MovieCategory.nowPlaying.name}');
+                  context.push('/tvlist/${TvCategory.popular.name}');
                 },
                 child: TvHorizontalList(category: TvCategory.popular),
               ),

@@ -7,7 +7,6 @@ class HorizontalItem extends StatelessWidget {
   final String name;
   final String description;
   final ImageProvider<Object>? backgroundImage;
-  final String placeholderImage;
 
   const HorizontalItem({
     super.key,
@@ -17,7 +16,6 @@ class HorizontalItem extends StatelessWidget {
     required this.name,
     required this.description,
     this.backgroundImage,
-    this.placeholderImage = 'assets/images/blank_profile_picture.png',
   });
 
   @override

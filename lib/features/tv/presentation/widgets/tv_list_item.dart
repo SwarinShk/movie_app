@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
+import 'package:go_router/go_router.dart';
 import 'package:movie_app/common/styles/app_textstyle.dart';
 import 'package:movie_app/common/widgets/badge/rating_badge.dart';
 import 'package:movie_app/core/constants/app_color.dart';
-import 'package:movie_app/features/movie/presentation/widgets/movie_meta_item.dart';
+import 'package:movie_app/common/widgets/badge/meta_item.dart';
 import 'package:movie_app/features/tv/data/models/tv_model.dart';
+import 'package:movie_app/utils/formatters.dart';
 
 class TvListItem extends StatelessWidget {
   final Result tv;
@@ -14,7 +15,9 @@ class TvListItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () {},
+      onTap: () {
+        context.push('/tvdetail/${tv.id}');
+      },
       child: Row(
         children: [
           Container(
@@ -64,9 +67,9 @@ class TvListItem extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 8),
-                MovieMetaItem(
+                MetaItem(
                   icon: Icons.calendar_month_rounded,
-                  text: _getReleaseYear(tv.firstAirDate.toString()),
+                  text: getReleaseYear(tv.firstAirDate.toString()),
                 ),
                 const SizedBox(height: 8),
                 DecoratedBox(
@@ -99,16 +102,5 @@ class TvListItem extends StatelessWidget {
         ],
       ),
     );
-  }
-
-  String _getReleaseYear(String? releaseDate) {
-    if (releaseDate != null && releaseDate.isNotEmpty) {
-      try {
-        return DateFormat.y().format(DateTime.parse(releaseDate));
-      } catch (_) {
-        return 'Unknown';
-      }
-    }
-    return 'Unknown';
   }
 }

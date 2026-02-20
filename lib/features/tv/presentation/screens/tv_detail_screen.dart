@@ -1,44 +1,44 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:intl/intl.dart';
-import 'package:movie_app/core/constants/app_color.dart';
 import 'package:movie_app/common/styles/app_textstyle.dart';
-import 'package:movie_app/features/movie/presentation/providers/movie_detail_provider.dart';
-import 'package:movie_app/common/widgets/avatar/horizontal_list.dart';
-import 'package:movie_app/common/widgets/indicator/meta_divider.dart';
-import 'package:movie_app/features/movie/presentation/widgets/movie_list.dart';
-import 'package:movie_app/common/widgets/badge/meta_item.dart';
 import 'package:movie_app/common/widgets/appbar/custom_appbar.dart';
 import 'package:movie_app/common/widgets/badge/rating_badge.dart';
 import 'package:movie_app/common/widgets/button/custom_icon_button.dart';
+import 'package:movie_app/core/constants/app_color.dart';
+import 'package:movie_app/common/widgets/avatar/horizontal_list.dart';
+import 'package:movie_app/common/widgets/indicator/meta_divider.dart';
+import 'package:movie_app/common/widgets/badge/meta_item.dart';
+import 'package:movie_app/features/tv/presentation/providers/tv_detail_provider.dart';
+import 'package:movie_app/features/tv/presentation/widgets/tv_list.dart';
+import 'package:movie_app/utils/formatters.dart';
 import 'package:provider/provider.dart';
 import 'package:readmore/readmore.dart';
 
-class MovieDetailScreen extends StatefulWidget {
-  final int movieId;
+class TvDetailScreen extends StatefulWidget {
+  final int tvId;
 
-  const MovieDetailScreen({required this.movieId, super.key});
+  const TvDetailScreen({required this.tvId, super.key});
 
   @override
-  State<MovieDetailScreen> createState() => _MovieDetailScreenState();
+  State<TvDetailScreen> createState() => _TvDetailScreenState();
 }
 
-class _MovieDetailScreenState extends State<MovieDetailScreen> {
+class _TvDetailScreenState extends State<TvDetailScreen> {
   @override
   void initState() {
     super.initState();
     Future.microtask(() {
       if (mounted) {
-        context.read<MovieDetailProvider>().fetchMovieDetail(widget.movieId);
-        context.read<MovieDetailProvider>().fetchMovieCredit(widget.movieId);
-        context.read<MovieDetailProvider>().fetchSimilar(widget.movieId);
+        context.read<TvDetailProvider>().fetchTvDetail(widget.tvId);
+        context.read<TvDetailProvider>().fetchTvCredit(widget.tvId);
+        context.read<TvDetailProvider>().fetchSimilar(widget.tvId);
       }
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<MovieDetailProvider>(
+    return Consumer<TvDetailProvider>(
       builder: (context, provider, _) {
         if (provider.isLoading) {
           return const Scaffold(
@@ -46,7 +46,7 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
               child: CircularProgressIndicator(color: AppColor.white),
             ),
           );
-        } else if (provider.movie == null) {
+        } else if (provider.tv == null) {
           return Scaffold(
             appBar: CustomAppBar(
               leading: Icons.chevron_left,
@@ -57,20 +57,20 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
             ),
             body: Center(
               child: Text(
-                "Movie not found",
+                "TV Show not found",
                 style: AppTextStyle.h4Medium.copyWith(color: AppColor.white),
               ),
             ),
           );
         } else {
-          final movie = provider.movie!;
-          final recommended = provider.recommended ?? [];
+          final tv = provider.tv!;
+          final similar = provider.similar ?? [];
 
           return Scaffold(
             appBar: CustomAppBar(
               leading: Icons.chevron_left,
               onLeadingPressed: () => context.pop(),
-              title: movie.title,
+              title: tv.name,
               actions: [
                 Padding(
                   padding: const EdgeInsets.only(right: 8),
@@ -93,9 +93,9 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
                         Center(
                           child: ClipRRect(
                             borderRadius: BorderRadius.circular(12),
-                            child: movie.posterPath != null
+                            child: tv.posterPath != null
                                 ? Image.network(
-                                    'https://image.tmdb.org/t/p/w500${movie.posterPath}',
+                                    'https://image.tmdb.org/t/p/w500${tv.posterPath}',
                                     fit: BoxFit.cover,
                                     width: posterWidth,
                                     height: posterHeight,
@@ -117,27 +117,36 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
                             children: [
                               MetaItem(
                                 icon: Icons.calendar_month_rounded,
-                                text: DateFormat.y().format(
-                                  DateTime.parse(movie.releaseDate),
+                                text: getReleaseYear(
+                                  tv.firstAirDate.toString(),
                                 ),
                               ),
                               MetaDivider(),
                               MetaItem(
                                 icon: Icons.access_time_filled_rounded,
-                                text: '${movie.runtime} min',
+                                text: tv.episodeRunTime.isNotEmpty
+                                    ? '${tv.episodeRunTime.first} min'
+                                    : 'N/A',
                               ),
                               MetaDivider(),
                               MetaItem(
                                 icon: Icons.movie_creation_rounded,
-                                text: movie.genres.isNotEmpty
-                                    ? movie.genres.first.name
+                                text: tv.genres.isNotEmpty
+                                    ? tv.genres.first.name
                                     : 'N/A',
+                              ),
+                              MetaDivider(),
+                              MetaItem(
+                                icon: Icons.tv,
+                                text: tv.numberOfSeasons == 1
+                                    ? "1 Season"
+                                    : "${tv.numberOfSeasons} Seasons",
                               ),
                             ],
                           ),
                         ),
                         SizedBox(height: 10),
-                        Center(child: RatingBadge(rating: movie.voteAverage)),
+                        Center(child: RatingBadge(rating: tv.voteAverage)),
                         SizedBox(height: 30),
                         Text(
                           'Movie Overview',
@@ -147,7 +156,7 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
                         ),
                         SizedBox(height: 10),
                         ReadMoreText(
-                          movie.overview,
+                          tv.overview,
                           trimCollapsedText: ' show more',
                           trimExpandedText: ' show less',
                           style: AppTextStyle.h5Regular.copyWith(
@@ -210,7 +219,7 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
                             },
                           ),
                         ],
-                        if (movie.productionCompanies.isNotEmpty) ...[
+                        if (tv.productionCompanies.isNotEmpty) ...[
                           SizedBox(height: 25),
                           Text(
                             'Production Companies',
@@ -223,11 +232,11 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
                             height: 60,
                             child: ListView.separated(
                               scrollDirection: Axis.horizontal,
-                              itemCount: movie.productionCompanies.length,
+                              itemCount: tv.productionCompanies.length,
                               separatorBuilder: (_, _) => SizedBox(width: 12),
                               itemBuilder: (context, index) {
                                 final production =
-                                    movie.productionCompanies[index];
+                                    tv.productionCompanies[index];
 
                                 return HorizontalItem(
                                   backgroundImage: production.logoPath != null
@@ -244,7 +253,7 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
                             ),
                           ),
                         ],
-                        if (recommended.isNotEmpty) ...[
+                        if (similar.isNotEmpty) ...[
                           SizedBox(height: 25),
                           Text(
                             'Similar Movies',
@@ -253,7 +262,7 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
                             ),
                           ),
                           SizedBox(height: 10),
-                          MovieList(movies: recommended),
+                          TvList(tvs: similar),
                         ],
                       ],
                     ),

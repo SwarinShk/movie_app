@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:intl/intl.dart';
 import 'package:movie_app/core/constants/app_color.dart';
 import 'package:movie_app/common/styles/app_textstyle.dart';
-import 'package:movie_app/features/movie/presentation/widgets/movie_meta_item.dart';
+import 'package:movie_app/common/widgets/badge/meta_item.dart';
 import 'package:movie_app/features/movie/data/models/paginated_movie_model.dart';
 import 'package:movie_app/common/widgets/badge/rating_badge.dart';
+import 'package:movie_app/utils/formatters.dart';
 
 class MovieListItem extends StatelessWidget {
   final Movie movie;
@@ -72,9 +72,9 @@ class MovieListItem extends StatelessWidget {
                 ),
                 const SizedBox(height: 8),
                 // Release year
-                MovieMetaItem(
+                MetaItem(
                   icon: Icons.calendar_month_rounded,
-                  text: _getReleaseYear(movie.releaseDate),
+                  text: getReleaseYear(movie.releaseDate),
                 ),
                 const SizedBox(height: 8),
                 // Adult rating badge
@@ -108,17 +108,5 @@ class MovieListItem extends StatelessWidget {
         ],
       ),
     );
-  }
-
-  // Helper to safely parse release year
-  String _getReleaseYear(String? releaseDate) {
-    if (releaseDate != null && releaseDate.isNotEmpty) {
-      try {
-        return DateFormat.y().format(DateTime.parse(releaseDate));
-      } catch (_) {
-        return 'Unknown';
-      }
-    }
-    return 'Unknown';
   }
 }

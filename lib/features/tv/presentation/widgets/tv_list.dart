@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:movie_app/core/constants/app_color.dart';
 import 'package:movie_app/common/styles/app_textstyle.dart';
-import 'package:movie_app/features/movie/data/models/paginated_movie_model.dart';
 import 'package:movie_app/common/widgets/badge/rating_badge.dart';
+import 'package:movie_app/features/tv/data/models/tv_model.dart';
 
-class MovieList extends StatelessWidget {
-  final List<Movie> movies;
-  final void Function(Movie movie)? onMovieItemTap;
+class TvList extends StatelessWidget {
+  final List<Result> tvs;
+  final void Function(Result tv)? onTvItemTap;
 
-  const MovieList({required this.movies, this.onMovieItemTap, super.key});
+  const TvList({required this.tvs, this.onTvItemTap, super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -16,12 +16,12 @@ class MovieList extends StatelessWidget {
       height: 240,
       child: ListView.separated(
         scrollDirection: Axis.horizontal,
-        itemCount: movies.length,
+        itemCount: tvs.length,
         separatorBuilder: (_, _) => const SizedBox(width: 10),
         itemBuilder: (context, index) {
-          final movie = movies[index];
+          final tv = tvs[index];
           return GestureDetector(
-            onTap: () => onMovieItemTap?.call(movie),
+            onTap: () => onTvItemTap?.call(tv),
             child: Container(
               width: 150,
               decoration: BoxDecoration(
@@ -39,9 +39,9 @@ class MovieList extends StatelessWidget {
                           top: Radius.circular(12),
                         ),
                         image: DecorationImage(
-                          image: movie.posterPath != null
+                          image: tv.posterPath.isNotEmpty
                               ? NetworkImage(
-                                  "https://image.tmdb.org/t/p/w500${movie.posterPath}",
+                                  "https://image.tmdb.org/t/p/w500${tv.posterPath}",
                                 )
                               : AssetImage('assets/images/image_not_found.png'),
                           fit: BoxFit.cover,
@@ -50,7 +50,7 @@ class MovieList extends StatelessWidget {
                       padding: EdgeInsets.all(8),
                       child: Align(
                         alignment: Alignment.topRight,
-                        child: RatingBadge(rating: movie.voteAverage),
+                        child: RatingBadge(rating: tv.voteAverage),
                       ),
                     ),
                   ),
@@ -61,7 +61,7 @@ class MovieList extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          movie.title,
+                          tv.name,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           style: AppTextStyle.h5SemiBold.copyWith(
@@ -70,7 +70,7 @@ class MovieList extends StatelessWidget {
                         ),
                         const SizedBox(height: 4),
                         Text(
-                          movie.overview,
+                          tv.overview,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           style: AppTextStyle.h6Medium.copyWith(

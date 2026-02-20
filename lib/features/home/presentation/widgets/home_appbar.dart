@@ -23,7 +23,7 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context) {
-    const horizontalPadding = 15.0;
+    const horizontalPadding = 8.0;
 
     return AppBar(
       elevation: 0,

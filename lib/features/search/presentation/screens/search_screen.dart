@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:movie_app/common/styles/app_textstyle.dart';
-import 'package:movie_app/common/widgets/appbar/search_appbar.dart';
+import 'package:movie_app/features/search/presentation/widgets/search_appbar.dart';
 import 'package:movie_app/core/constants/app_color.dart';
 import 'package:movie_app/features/search/presentation/providers/search_movie_provider.dart';
 import 'package:movie_app/features/search/presentation/providers/search_person_provider.dart';

@@ -2,14 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:movie_app/core/constants/app_color.dart';
 import 'package:movie_app/common/styles/app_textstyle.dart';
 
-class MovieMetaItem extends StatelessWidget {
+class MetaItem extends StatelessWidget {
   final IconData icon;
   final String text;
   final Color? color;
   final double iconSize;
   final double spacing;
 
-  const MovieMetaItem({
+  const MetaItem({
     super.key,
     required this.icon,
     required this.text,
