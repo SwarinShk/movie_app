@@ -46,7 +46,7 @@ class TvHorizontalList extends StatelessWidget {
           onTvItemTap: (tv) {
             context.push('/tvdetail/${tv.id}');
           },
-          tvs: tvs,
+          tvs: displaytvs,
         );
       },
     );

@@ -8,7 +8,7 @@ import 'package:movie_app/features/dashboard/presentation/screens/dashboard_shel
 import 'package:movie_app/features/tv/data/models/tv_category_model.dart';
 import 'package:movie_app/features/tv/presentation/screens/tv_detail_screen.dart';
 import 'package:movie_app/features/tv/presentation/screens/tv_list_screen.dart';
-import 'package:movie_app/features/wishlist/presentation/screens/wishlist_screen.dart';
+import 'package:movie_app/features/wishlist/presentation/screens/watchlist_screen.dart';
 import 'package:movie_app/features/home/presentation/screens/home_screen.dart';
 import 'package:movie_app/features/movie/presentation/screens/movie_detail_screen.dart';
 import 'package:movie_app/features/movie/presentation/screens/movie_list_screen.dart';
@@ -93,7 +93,7 @@ final GoRouter router = GoRouter(
               path: '/download',
               pageBuilder: (context, state) => CustomTransitionPage(
                 key: state.pageKey,
-                child: const WishlistScreen(),
+                child: const WatchlistScreen(),
                 transitionsBuilder: fadeTransition,
               ),
             ),

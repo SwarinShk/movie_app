@@ -10,6 +10,7 @@ import 'package:movie_app/common/widgets/indicator/meta_divider.dart';
 import 'package:movie_app/common/widgets/badge/meta_item.dart';
 import 'package:movie_app/features/tv/presentation/providers/tv_detail_provider.dart';
 import 'package:movie_app/features/tv/presentation/widgets/tv_list.dart';
+import 'package:movie_app/features/wishlist/presentation/providers/watchlist_provider.dart';
 import 'package:movie_app/utils/formatters.dart';
 import 'package:provider/provider.dart';
 import 'package:readmore/readmore.dart';
@@ -72,6 +73,26 @@ class _TvDetailScreenState extends State<TvDetailScreen> {
               onLeadingPressed: () => context.pop(),
               title: tv.name,
               actions: [
+                Consumer<WatchlistProvider>(
+                  builder: (_, provider, _) {
+                    final inWatchlist = provider.isTvInWatchlist(tv.id);
+
+                    return CustomIconButton(
+                      icon: inWatchlist
+                          ? Icons.bookmark
+                          : Icons.bookmark_border,
+                      iconColor: inWatchlist ? Colors.red : Colors.grey,
+                      onPressed: () async {
+                        await provider.toggleWatchlist(
+                          mediaId: tv.id,
+                          mediaType: "tv",
+                          isInWatchlist: inWatchlist,
+                        );
+                        provider.fetchAll(reset: true);
+                      },
+                    );
+                  },
+                ),
                 Padding(
                   padding: const EdgeInsets.only(right: 8),
                   child: CustomIconButton(onPressed: () {}),

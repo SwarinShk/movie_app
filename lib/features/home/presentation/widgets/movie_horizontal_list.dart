@@ -46,7 +46,7 @@ class MovieHorizontalList extends StatelessWidget {
           onMovieItemTap: (movie) {
             context.push('/moviedetail/${movie.id}');
           },
-          movies: movies,
+          movies: displayMovies,
         );
       },
     );

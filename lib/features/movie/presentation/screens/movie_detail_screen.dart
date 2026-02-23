@@ -11,6 +11,7 @@ import 'package:movie_app/common/widgets/badge/meta_item.dart';
 import 'package:movie_app/common/widgets/appbar/custom_appbar.dart';
 import 'package:movie_app/common/widgets/badge/rating_badge.dart';
 import 'package:movie_app/common/widgets/button/custom_icon_button.dart';
+import 'package:movie_app/features/wishlist/presentation/providers/watchlist_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:readmore/readmore.dart';
 
@@ -72,6 +73,25 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
               onLeadingPressed: () => context.pop(),
               title: movie.title,
               actions: [
+                Consumer<WatchlistProvider>(
+                  builder: (_, provider, _) {
+                    final inWatchlist = provider.isMovieInWatchlist(movie.id);
+                    return CustomIconButton(
+                      icon: inWatchlist
+                          ? Icons.bookmark
+                          : Icons.bookmark_border,
+                      iconColor: inWatchlist ? Colors.red : Colors.grey,
+                      onPressed: () async {
+                        await provider.toggleWatchlist(
+                          mediaId: movie.id,
+                          mediaType: "movie",
+                          isInWatchlist: inWatchlist,
+                        );
+                        provider.fetchAll(reset: true);
+                      },
+                    );
+                  },
+                ),
                 Padding(
                   padding: const EdgeInsets.only(right: 8),
                   child: CustomIconButton(onPressed: () {}),

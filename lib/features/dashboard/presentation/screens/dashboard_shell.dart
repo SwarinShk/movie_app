@@ -45,8 +45,8 @@ class DashboardShell extends StatelessWidget {
             unSelectedColor: AppColor.grey,
           ),
           BottomBarItem(
-            icon: Icon(Icons.assignment),
-            title: Text('Wishlist'),
+            icon: Icon(Icons.bookmark),
+            title: Text('Watchlist'),
             backgroundColor: AppColor.redAccent,
             selectedColor: AppColor.redAccent,
             unSelectedColor: AppColor.grey,

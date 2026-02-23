@@ -10,6 +10,7 @@ import 'package:movie_app/features/search/presentation/providers/search_person_p
 import 'package:movie_app/features/search/presentation/providers/search_tv_provider.dart';
 import 'package:movie_app/features/tv/presentation/providers/tv_detail_provider.dart';
 import 'package:movie_app/features/tv/presentation/providers/tv_provider.dart';
+import 'package:movie_app/features/wishlist/presentation/providers/watchlist_provider.dart';
 import 'package:provider/provider.dart';
 
 void main() async {
@@ -30,6 +31,31 @@ void main() async {
         ChangeNotifierProvider(create: (_) => SearchMovieProvider()),
         ChangeNotifierProvider(create: (_) => SearchTvProvider()),
         ChangeNotifierProvider(create: (_) => SearchPersonProvider()),
+
+        ChangeNotifierProxyProvider<AuthServiceProvider, WatchlistProvider>(
+          create: (context) => WatchlistProvider(
+            auth: Provider.of<AuthServiceProvider>(context, listen: false),
+          ),
+          update: (context, auth, previousWatchlist) {
+            // This runs whenever AuthServiceProvider calls notifyListeners()
+            final watchlist =
+                previousWatchlist ?? WatchlistProvider(auth: auth);
+
+            // If user just logged in, trigger initial fetch
+            if (auth.sessionId != null &&
+                watchlist.movieWatchlist == null &&
+                !watchlist.isLoading) {
+              watchlist.fetchAll();
+            }
+
+            // If user logged out, clear the data
+            if (auth.sessionId == null) {
+              watchlist.clear();
+            }
+
+            return watchlist;
+          },
+        ),
       ],
       child: const MainApp(),
     ),
