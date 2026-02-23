@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:movie_app/core/constants/app_color.dart';
 import 'package:movie_app/common/styles/app_textstyle.dart';
+import 'package:movie_app/features/favorite/presentation/providers/favorite_provider.dart';
 import 'package:movie_app/features/movie/presentation/providers/movie_detail_provider.dart';
 import 'package:movie_app/common/widgets/avatar/horizontal_list.dart';
 import 'package:movie_app/common/widgets/indicator/meta_divider.dart';
@@ -11,7 +12,7 @@ import 'package:movie_app/common/widgets/badge/meta_item.dart';
 import 'package:movie_app/common/widgets/appbar/custom_appbar.dart';
 import 'package:movie_app/common/widgets/badge/rating_badge.dart';
 import 'package:movie_app/common/widgets/button/custom_icon_button.dart';
-import 'package:movie_app/features/wishlist/presentation/providers/watchlist_provider.dart';
+import 'package:movie_app/features/watchlist/presentation/providers/watchlist_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:readmore/readmore.dart';
 
@@ -76,11 +77,14 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
                 Consumer<WatchlistProvider>(
                   builder: (_, provider, _) {
                     final inWatchlist = provider.isMovieInWatchlist(movie.id);
+
                     return CustomIconButton(
                       icon: inWatchlist
                           ? Icons.bookmark
                           : Icons.bookmark_border,
-                      iconColor: inWatchlist ? Colors.red : Colors.grey,
+                      iconColor: inWatchlist
+                          ? AppColor.redAccent
+                          : AppColor.grey,
                       onPressed: () async {
                         await provider.toggleWatchlist(
                           mediaId: movie.id,
@@ -94,7 +98,28 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
                 ),
                 Padding(
                   padding: const EdgeInsets.only(right: 8),
-                  child: CustomIconButton(onPressed: () {}),
+                  child: Consumer<FavoriteProvider>(
+                    builder: (_, provider, _) {
+                      final inFavorite = provider.isMovieInFavorite(movie.id);
+
+                      return CustomIconButton(
+                        icon: inFavorite
+                            ? Icons.favorite
+                            : Icons.favorite_border,
+                        iconColor: inFavorite
+                            ? AppColor.redAccent
+                            : AppColor.grey,
+                        onPressed: () async {
+                          await provider.toggleFavorite(
+                            mediaId: movie.id,
+                            mediaType: 'movie',
+                            isInFavorite: inFavorite,
+                          );
+                          provider.fetchAll(reset: true);
+                        },
+                      );
+                    },
+                  ),
                 ),
               ],
             ),

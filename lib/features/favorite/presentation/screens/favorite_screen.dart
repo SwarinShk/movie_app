@@ -1,29 +1,30 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:movie_app/common/styles/app_textstyle.dart';
 import 'package:movie_app/common/widgets/appbar/custom_appbar.dart';
 import 'package:movie_app/core/constants/app_color.dart';
-import 'package:movie_app/features/wishlist/presentation/providers/watchlist_provider.dart';
-import 'package:movie_app/features/wishlist/presentation/widgets/movie_watchlist_tab.dart';
-import 'package:movie_app/features/wishlist/presentation/widgets/tv_watchlist_tab.dart';
+import 'package:movie_app/features/favorite/presentation/providers/favorite_provider.dart';
+import 'package:movie_app/features/favorite/presentation/widgets/movie_favorite_tab.dart';
+import 'package:movie_app/features/favorite/presentation/widgets/tv_favorite_tab.dart';
 import 'package:provider/provider.dart';
 
-class WatchlistScreen extends StatefulWidget {
-  const WatchlistScreen({super.key});
+class FavoriteScreen extends StatefulWidget {
+  const FavoriteScreen({super.key});
 
   @override
-  State<WatchlistScreen> createState() => _WatchlistScreenState();
+  State<FavoriteScreen> createState() => _FavoriteScreenState();
 }
 
-class _WatchlistScreenState extends State<WatchlistScreen> {
-  late final ScrollController _movieScrollController = ScrollController();
-  late final ScrollController _tvScrollController = ScrollController();
+class _FavoriteScreenState extends State<FavoriteScreen> {
+  final ScrollController _movieScrollController = ScrollController();
+  final ScrollController _tvScrollController = ScrollController();
 
   void _initFetch() {
     Future.microtask(() {
       if (!mounted) return;
-      final provider = context.read<WatchlistProvider>();
-      provider.fetchMovieWatchlist(initialLoad: true);
-      provider.fetchTvWatchlist(initialLoad: true);
+      final provider = context.read<FavoriteProvider>();
+      provider.fetchMovieFavorite(initialLoad: true);
+      provider.fetchTvFavorite(initialLoad: true);
     });
   }
 
@@ -38,22 +39,22 @@ class _WatchlistScreenState extends State<WatchlistScreen> {
   }
 
   void _onMovieScroll() {
-    final provider = context.read<WatchlistProvider>();
+    final provider = context.read<FavoriteProvider>();
     if (_movieScrollController.position.pixels >=
             _movieScrollController.position.maxScrollExtent - 300 &&
         !provider.isFetchingMoreMovies &&
         !provider.isLoading) {
-      provider.fetchMovieWatchlist(initialLoad: false);
+      provider.fetchMovieFavorite(initialLoad: false);
     }
   }
 
   void _onTvScroll() {
-    final provider = context.read<WatchlistProvider>();
+    final provider = context.read<FavoriteProvider>();
     if (_tvScrollController.position.pixels >=
             _tvScrollController.position.maxScrollExtent - 300 &&
         !provider.isFetchingMoreTv &&
         !provider.isLoading) {
-      provider.fetchTvWatchlist(initialLoad: false);
+      provider.fetchTvFavorite(initialLoad: false);
     }
   }
 
@@ -71,7 +72,13 @@ class _WatchlistScreenState extends State<WatchlistScreen> {
     return DefaultTabController(
       length: 2,
       child: Scaffold(
-        appBar: CustomAppBar(title: 'Watchlist'),
+        appBar: CustomAppBar(
+          leading: Icons.chevron_left,
+          onLeadingPressed: () {
+            context.pop();
+          },
+          title: 'Favorites',
+        ),
         body: SafeArea(
           child: Column(
             children: [
@@ -94,20 +101,20 @@ class _WatchlistScreenState extends State<WatchlistScreen> {
               ),
               const SizedBox(height: 10),
               Expanded(
-                child: Consumer<WatchlistProvider>(
+                child: Consumer<FavoriteProvider>(
                   builder: (context, provider, _) {
-                    final movieItems = provider.movieWatchlist?.results ?? [];
-                    final tvItems = provider.tvWatchlist?.results ?? [];
+                    final movieItems = provider.movieFavorite?.results ?? [];
+                    final tvItems = provider.tvFavorite?.results ?? [];
 
                     return TabBarView(
                       children: [
-                        MovieWatchlistTab(
+                        MovieFavoriteTab(
                           items: movieItems,
                           isLoading: provider.isLoading,
                           isFetchingMore: provider.isFetchingMoreMovies,
                           scrollController: _movieScrollController,
                         ),
-                        TvWatchlistTab(
+                        TvFavoriteTab(
                           items: tvItems,
                           isLoading: provider.isLoading,
                           isFetchingMore: provider.isFetchingMoreTv,

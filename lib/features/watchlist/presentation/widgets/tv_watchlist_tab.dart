@@ -2,18 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:movie_app/common/styles/app_textstyle.dart';
 import 'package:movie_app/common/widgets/button/primary_icon_button.dart';
 import 'package:movie_app/core/constants/app_color.dart';
-import 'package:movie_app/features/movie/data/models/paginated_movie_model.dart';
-import 'package:movie_app/features/movie/presentation/widgets/movie_list_item.dart';
-import 'package:movie_app/features/wishlist/presentation/providers/watchlist_provider.dart';
+import 'package:movie_app/features/tv/data/models/tv_model.dart';
+import 'package:movie_app/features/tv/presentation/widgets/tv_list_item.dart';
+import 'package:movie_app/features/watchlist/presentation/providers/watchlist_provider.dart';
 import 'package:provider/provider.dart';
 
-class MovieWatchlistTab extends StatelessWidget {
-  final List<Movie> items;
+class TvWatchlistTab extends StatelessWidget {
+  final List<Result> items;
   final bool isLoading;
   final bool isFetchingMore;
   final ScrollController scrollController;
 
-  const MovieWatchlistTab({
+  const TvWatchlistTab({
     required this.items,
     required this.isLoading,
     required this.isFetchingMore,
@@ -34,14 +34,14 @@ class MovieWatchlistTab extends StatelessWidget {
           mainAxisAlignment: .center,
           children: [
             Text(
-              'Movies Watchlist is empty',
+              'TV Shows Watchlist list is empty',
               style: AppTextStyle.h4Medium.copyWith(color: AppColor.white),
             ),
             PrimaryIconButton(
               label: 'Refresh',
               icon: Icons.refresh,
               onPressed: () async {
-                await context.read<WatchlistProvider>().fetchMovieWatchlist(
+                await context.read<WatchlistProvider>().fetchTvWatchlist(
                   initialLoad: true,
                   reset: true,
                 );
@@ -53,7 +53,7 @@ class MovieWatchlistTab extends StatelessWidget {
     } else {
       return RefreshIndicator(
         onRefresh: () async {
-          await context.read<WatchlistProvider>().fetchMovieWatchlist(
+          await context.read<WatchlistProvider>().fetchTvWatchlist(
             initialLoad: true,
             reset: true,
           );
@@ -76,7 +76,7 @@ class MovieWatchlistTab extends StatelessWidget {
             }
 
             final item = items[index];
-            return MovieListItem(movie: item);
+            return TvListItem(tv: item);
           },
         ),
       );

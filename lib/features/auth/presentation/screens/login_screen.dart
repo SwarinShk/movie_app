@@ -11,6 +11,7 @@ import 'package:movie_app/common/widgets/button/custom_text_button.dart';
 import 'package:movie_app/common/widgets/card/labeled_field.dart';
 import 'package:movie_app/common/widgets/textfield/custom_text_form_field.dart';
 import 'package:provider/provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -23,6 +24,13 @@ class _LoginScreenState extends State<LoginScreen> {
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
+
+  void _launchURLBrowser() async {
+    var url = Uri.parse("https://www.themoviedb.org/reset-password");
+    if (!await launchUrl(url, mode: LaunchMode.externalApplication)) {
+      throw Exception('Could not launch $url');
+    }
+  }
 
   @override
   void dispose() {
@@ -86,7 +94,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   alignment: Alignment.centerRight,
                   child: CustomTextButton(
                     title: 'Forgot Password?',
-                    onPressed: () {},
+                    onPressed: _launchURLBrowser,
                   ),
                 ),
                 const SizedBox(height: 40),

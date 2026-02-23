@@ -2,18 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:movie_app/common/styles/app_textstyle.dart';
 import 'package:movie_app/common/widgets/button/primary_icon_button.dart';
 import 'package:movie_app/core/constants/app_color.dart';
+import 'package:movie_app/features/favorite/presentation/providers/favorite_provider.dart';
 import 'package:movie_app/features/tv/data/models/tv_model.dart';
 import 'package:movie_app/features/tv/presentation/widgets/tv_list_item.dart';
-import 'package:movie_app/features/wishlist/presentation/providers/watchlist_provider.dart';
 import 'package:provider/provider.dart';
 
-class TvWatchlistTab extends StatelessWidget {
+class TvFavoriteTab extends StatelessWidget {
   final List<Result> items;
   final bool isLoading;
   final bool isFetchingMore;
   final ScrollController scrollController;
 
-  const TvWatchlistTab({
+  const TvFavoriteTab({
     required this.items,
     required this.isLoading,
     required this.isFetchingMore,
@@ -34,14 +34,14 @@ class TvWatchlistTab extends StatelessWidget {
           mainAxisAlignment: .center,
           children: [
             Text(
-              'TV Shows Watchlist is empty',
+              'Favorite TV Shows list is empty',
               style: AppTextStyle.h4Medium.copyWith(color: AppColor.white),
             ),
             PrimaryIconButton(
               label: 'Refresh',
               icon: Icons.refresh,
               onPressed: () async {
-                await context.read<WatchlistProvider>().fetchTvWatchlist(
+                await context.read<FavoriteProvider>().fetchTvFavorite(
                   initialLoad: true,
                   reset: true,
                 );
@@ -53,7 +53,7 @@ class TvWatchlistTab extends StatelessWidget {
     } else {
       return RefreshIndicator(
         onRefresh: () async {
-          await context.read<WatchlistProvider>().fetchTvWatchlist(
+          await context.read<FavoriteProvider>().fetchTvFavorite(
             initialLoad: true,
             reset: true,
           );

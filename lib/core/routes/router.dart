@@ -5,10 +5,11 @@ import 'package:movie_app/features/auth/presentation/screens/onboarding_screen.d
 import 'package:movie_app/features/auth/presentation/screens/signup_screen.dart';
 import 'package:movie_app/features/auth/presentation/screens/splash_screen.dart';
 import 'package:movie_app/features/dashboard/presentation/screens/dashboard_shell.dart';
+import 'package:movie_app/features/favorite/presentation/screens/favorite_screen.dart';
 import 'package:movie_app/features/tv/data/models/tv_category_model.dart';
 import 'package:movie_app/features/tv/presentation/screens/tv_detail_screen.dart';
 import 'package:movie_app/features/tv/presentation/screens/tv_list_screen.dart';
-import 'package:movie_app/features/wishlist/presentation/screens/watchlist_screen.dart';
+import 'package:movie_app/features/watchlist/presentation/screens/watchlist_screen.dart';
 import 'package:movie_app/features/home/presentation/screens/home_screen.dart';
 import 'package:movie_app/features/movie/presentation/screens/movie_detail_screen.dart';
 import 'package:movie_app/features/movie/presentation/screens/movie_list_screen.dart';
@@ -90,7 +91,7 @@ final GoRouter router = GoRouter(
         StatefulShellBranch(
           routes: [
             GoRoute(
-              path: '/download',
+              path: '/watchlist',
               pageBuilder: (context, state) => CustomTransitionPage(
                 key: state.pageKey,
                 child: const WatchlistScreen(),
@@ -166,6 +167,15 @@ final GoRouter router = GoRouter(
           transitionsBuilder: slideTransition,
         );
       },
+    ),
+
+    GoRoute(
+      path: '/favorite',
+      pageBuilder: (context, state) => CustomTransitionPage(
+        key: state.pageKey,
+        child: const FavoriteScreen(),
+        transitionsBuilder: slideTransition,
+      ),
     ),
   ],
 );

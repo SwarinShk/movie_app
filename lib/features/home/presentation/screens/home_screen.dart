@@ -55,7 +55,9 @@ class _HomeScreenState extends State<HomeScreen> {
         userName: authProvider.account?.username ?? 'Guest',
         subtitle: "Let's stream your favorite movie",
         avatar: authProvider.account?.avatar,
-        onFavoriteTap: () {},
+        onFavoriteTap: () {
+          context.push('/favorite');
+        },
       ),
       body: SafeArea(
         child: SingleChildScrollView(

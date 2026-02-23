@@ -8,9 +8,10 @@ import 'package:movie_app/core/constants/app_color.dart';
 import 'package:movie_app/common/widgets/avatar/horizontal_list.dart';
 import 'package:movie_app/common/widgets/indicator/meta_divider.dart';
 import 'package:movie_app/common/widgets/badge/meta_item.dart';
+import 'package:movie_app/features/favorite/presentation/providers/favorite_provider.dart';
 import 'package:movie_app/features/tv/presentation/providers/tv_detail_provider.dart';
 import 'package:movie_app/features/tv/presentation/widgets/tv_list.dart';
-import 'package:movie_app/features/wishlist/presentation/providers/watchlist_provider.dart';
+import 'package:movie_app/features/watchlist/presentation/providers/watchlist_provider.dart';
 import 'package:movie_app/utils/formatters.dart';
 import 'package:provider/provider.dart';
 import 'package:readmore/readmore.dart';
@@ -81,7 +82,9 @@ class _TvDetailScreenState extends State<TvDetailScreen> {
                       icon: inWatchlist
                           ? Icons.bookmark
                           : Icons.bookmark_border,
-                      iconColor: inWatchlist ? Colors.red : Colors.grey,
+                      iconColor: inWatchlist
+                          ? AppColor.redAccent
+                          : AppColor.grey,
                       onPressed: () async {
                         await provider.toggleWatchlist(
                           mediaId: tv.id,
@@ -95,7 +98,28 @@ class _TvDetailScreenState extends State<TvDetailScreen> {
                 ),
                 Padding(
                   padding: const EdgeInsets.only(right: 8),
-                  child: CustomIconButton(onPressed: () {}),
+                  child: Consumer<FavoriteProvider>(
+                    builder: (_, provider, _) {
+                      final inFavorite = provider.isTvInFavorite(tv.id);
+
+                      return CustomIconButton(
+                        icon: inFavorite
+                            ? Icons.favorite
+                            : Icons.favorite_border,
+                        iconColor: inFavorite
+                            ? AppColor.redAccent
+                            : AppColor.grey,
+                        onPressed: () async {
+                          await provider.toggleFavorite(
+                            mediaId: tv.id,
+                            mediaType: 'tv',
+                            isInFavorite: inFavorite,
+                          );
+                          provider.fetchAll(reset: true);
+                        },
+                      );
+                    },
+                  ),
                 ),
               ],
             ),
