@@ -6,12 +6,14 @@ class CustomButton extends StatelessWidget {
   final double height;
   final double width;
   final String title;
+  final Color titleColor;
   final void Function()? onPressed;
 
   const CustomButton({
     this.height = 55,
     this.width = double.infinity,
     required this.title,
+    this.titleColor = AppColor.white,
     this.onPressed,
     super.key,
   });
@@ -35,7 +37,7 @@ class CustomButton extends StatelessWidget {
         onPressed: onPressed,
         child: Text(
           title,
-          style: AppTextStyle.h4Medium.copyWith(color: AppColor.white),
+          style: AppTextStyle.h4Medium.copyWith(color: titleColor),
         ),
       ),
     );

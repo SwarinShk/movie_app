@@ -100,6 +100,9 @@ class _LoginScreenState extends State<LoginScreen> {
                 const SizedBox(height: 40),
                 CustomButton(
                   title: authProvider.isLoading ? 'Logging In...' : 'Log In',
+                  titleColor: authProvider.isLoading
+                      ? AppColor.white.withValues(alpha: 0.2)
+                      : AppColor.white,
                   onPressed: authProvider.isLoading
                       ? null
                       : () async {

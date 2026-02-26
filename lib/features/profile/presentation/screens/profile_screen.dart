@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:movie_app/common/dialogs/logout_dialog.dart';
 import 'package:movie_app/core/constants/app_color.dart';
 import 'package:movie_app/common/styles/app_textstyle.dart';
 import 'package:movie_app/features/auth/presentation/providers/auth_provider.dart';
@@ -16,6 +17,7 @@ class ProfileScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final authProvider = context.read<AuthServiceProvider>();
+
     return Scaffold(
       appBar: CustomAppBar(title: 'Profile'),
       body: SafeArea(
@@ -59,8 +61,15 @@ class ProfileScreen extends StatelessWidget {
                     CustomIconButton(
                       icon: Icons.logout,
                       onPressed: () {
-                        authProvider.logout();
-                        context.goNamed('signup');
+                        showDialog(
+                          context: context,
+                          builder: (_) => LogoutDialog(
+                            onLogOutPressed: () {
+                              authProvider.logout();
+                              context.goNamed('signup');
+                            },
+                          ),
+                        );
                       },
                     ),
                   ],
