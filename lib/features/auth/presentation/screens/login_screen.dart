@@ -67,7 +67,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
                 const SizedBox(height: 28),
                 Text(
-                  'Today is a new trading day. Stay informed, track the market, and manage your investments with confidence.',
+                  'Today is a new day to discover something great. Stay updated with trending movies and TV shows, explore detailed insights, and manage your watchlist with ease and confidence. 🎬',
                   style: AppTextStyle.h5Medium.copyWith(color: AppColor.white),
                 ),
                 const SizedBox(height: 50),
